@@ -1,7 +1,7 @@
-<?php 
+<?php
 	// Incluir archivo de seguridad
 	require_once "../seguridad.php";
-	
+
 	// Requerir autenticación
 	requerirAutenticacion();
 
@@ -14,7 +14,8 @@
 	}
 	$vistasDir = dirname($scriptName);
 	$vistasBase = $vistasDir . '/';
-	$procesosBase = dirname($vistasDir) . '/procesos/';
+	// En la raíz del servidor dirname('/vistas') es '/' (o '\' en Windows): sin rtrim saldría '//procesos/'
+	$procesosBase = rtrim(str_replace('\\', '/', dirname($vistasDir)), '/') . '/procesos/';
 	// Asegurar rutas absolutas (empiezan por /) para que funcionen desde cualquier página
 	if ($vistasBase !== '' && $vistasBase[0] !== '/') {
 		$vistasBase = '/' . $vistasBase;
@@ -27,72 +28,88 @@
 	$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 	$urlSalir = $protocolo . '://' . $host . $procesosBase . 'salir.php';
 
-	// ===== Breadcrumbs globales (historial de navegacion) =====
 	$archivoActual = basename($scriptName);
-	$etiquetasBreadcrumb = array(
-		'inicio.php' => 'Inicio',
-		'equipos.php' => 'Equipos',
-		'departamentos.php' => 'Departamentos',
-		'fases.php' => 'Fases',
-		'areas.php' => 'Areas',
-		'resguardos.php' => 'Resguardos',
-		'solicitudAltaEquipos.php' => 'Solicitud Alta de Equipos',
-		'altas.php' => 'Altas',
-		'bajas.php' => 'Bajas',
-		'bajasMasivas.php' => 'Bajas Masivas',
-		'reportes.php' => 'Reportes',
-		'usuarios.php' => 'Usuarios',
-		'backup.php' => 'Respaldo BD',
-		'toallas.php' => 'Control Toallas',
-		'historialToallas.php' => 'Historial Toallas'
-	);
-	$breadcrumbActual = isset($etiquetasBreadcrumb[$archivoActual]) ? $etiquetasBreadcrumb[$archivoActual] : 'Seccion';
-
-	// Construir URL absoluta de la pagina actual dentro de /vistas/
-	$rutaRelActual = ltrim((string)parse_url($scriptName, PHP_URL_PATH), '/');
-	$urlActual = '/' . $rutaRelActual;
-
-	// Historial en sesion (max 6 paginas), sin duplicar la pagina actual consecutivamente
-	if (!isset($_SESSION['breadcrumb_history']) || !is_array($_SESSION['breadcrumb_history'])) {
-		$_SESSION['breadcrumb_history'] = array();
-	}
-	$history = $_SESSION['breadcrumb_history'];
-	$last = end($history);
-	if (!$last || !isset($last['url']) || $last['url'] !== $urlActual) {
-		$history[] = array(
-			'url' => $urlActual,
-			'label' => $breadcrumbActual
-		);
-		if (count($history) > 6) {
-			$history = array_slice($history, -6);
-		}
-		$_SESSION['breadcrumb_history'] = $history;
-	}
-
-	// Tomar hasta 3 elementos del final para mostrar ruta util (anterior(es) + actual)
-	$breadcrumbTrail = array_slice($_SESSION['breadcrumb_history'], -3);
 	$rol_sesion = isset($_SESSION['rol']) ? strtoupper(trim((string)$_SESSION['rol'])) : 'ADMIN';
 	$es_toalleros = ($rol_sesion === 'TOALLEROS');
+	$es_super_admin = isset($_SESSION['iduser']) && (int)$_SESSION['iduser'] === 1;
 	$homePage = 'inicio.php';
+
+	// Migas de pan jerárquicas: página => [sección, etiqueta]
+	$migasPaginas = array(
+		'inicio.php' => array(null, 'Inicio'),
+		'equipos.php' => array('Inventario', 'Equipos'),
+		'resguardos.php' => array('Inventario', 'Resguardos'),
+		'nuevoResguardo.php' => array('Inventario', 'Nuevo resguardo'),
+		'solicitudAltaEquipos.php' => array('Inventario', 'Solicitudes de alta'),
+		'altas.php' => array('Inventario', 'Altas'),
+		'bajas.php' => array('Bajas', 'Baja individual'),
+		'bajasMasivas.php' => array('Bajas', 'Bajas masivas'),
+		'departamentos.php' => array('Catálogos', 'Departamentos'),
+		'areas.php' => array('Catálogos', 'Áreas'),
+		'fases.php' => array('Catálogos', 'Fases'),
+		'reportes.php' => array(null, 'Reportes'),
+		'usuarios.php' => array('Administración', 'Usuarios'),
+		'backup.php' => array('Administración', 'Respaldo de base de datos'),
+		'toallas.php' => array('Albercas', 'Control de toallas'),
+		'historialToallas.php' => array('Albercas', 'Historial de toallas'),
+	);
+	$migaActual = isset($migasPaginas[$archivoActual]) ? $migasPaginas[$archivoActual] : array(null, 'Sección');
+
+	$nombreUsuario = (isset($_SESSION['nombre']) && isset($_SESSION['apellido']))
+		? trim($_SESSION['nombre'] . ' ' . $_SESSION['apellido'])
+		: (string)($_SESSION['usuario'] ?? '');
+	$partesNombre = preg_split('/\s+/', $nombreUsuario, -1, PREG_SPLIT_NO_EMPTY);
+	$iniciales = '';
+	foreach (array_slice($partesNombre, 0, 2) as $p) {
+		$iniciales .= mb_strtoupper(mb_substr($p, 0, 1));
+	}
+	$nombreHotelSesion = !empty($_SESSION['nombre_hotel']) ? (string)$_SESSION['nombre_hotel'] : 'Hotel';
+	if ($es_super_admin) {
+		$rolUsuarioTexto = 'Super Administrador';
+		$hotelBarra = 'Todos los hoteles';
+	} elseif ($es_toalleros) {
+		$rolUsuarioTexto = 'Toallero · ' . $nombreHotelSesion;
+		$hotelBarra = $nombreHotelSesion;
+	} else {
+		$rolUsuarioTexto = 'Administrador · ' . $nombreHotelSesion;
+		$hotelBarra = $nombreHotelSesion;
+	}
+
+	if (!function_exists('ccItemMenu')) {
+		function ccItemMenu($href, $icono, $texto, $activo) {
+			echo '<a href="' . htmlspecialchars($href) . '" class="cc-nav__item' . ($activo ? ' cc-nav__item--on' : '') . '"'
+				. ($activo ? ' aria-current="page"' : '') . ' title="' . htmlspecialchars($texto) . '">'
+				. '<i data-i="' . htmlspecialchars($icono) . '"></i><span>' . htmlspecialchars($texto) . '</span></a>';
+		}
+	}
+	$vb = $vistasBase;
+	$a = $archivoActual;
 	?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
+	<script>
+		(function(){
+			var t = null;
+			try { t = localStorage.getItem('cc-tema'); } catch (e) {}
+			if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'oscuro';
+			document.documentElement.setAttribute('data-tema', t === 'oscuro' ? 'oscuro' : 'claro');
+		})();
+	</script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="description" content="Sistema de Gestión de Equipos del Hotel Villa Group">
-	<meta name="theme-color" content="#c29a4b">
+	<meta name="theme-color" content="#B8893A">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
 	<meta name="apple-mobile-web-app-title" content="Villa Equipos">
-	
+
 	<title><?php echo isset($titulo_pagina) ? htmlspecialchars($titulo_pagina) : 'Sistema de Gestión de Equipos - Hotel Villa Group'; ?></title>
 	<?php if (!empty($estilos_extra)) { echo $estilos_extra; } ?>
 	<?php
 		$verCssBootstrap = @filemtime(__DIR__ . '/../librerias/bootstrap/css/bootstrap.min.css') ?: time();
-		$verCssTheme = @filemtime(__DIR__ . '/../css/villa-group-theme.css') ?: time();
-		$verCssMenu = @filemtime(__DIR__ . '/../css/menu.css') ?: time();
+		$verCssCosta = @filemtime(__DIR__ . '/../css/costa-clara.css') ?: time();
 		$verCssAlertify = @filemtime(__DIR__ . '/../librerias/alertifyjs/css/alertify.css') ?: time();
 		$verCssAlertifyTheme = @filemtime(__DIR__ . '/../librerias/alertifyjs/css/themes/default.css') ?: time();
 		$verJsJquery = @filemtime(__DIR__ . '/../librerias/jquery-3.2.1.min.js') ?: time();
@@ -101,149 +118,103 @@
 		$verJsFunciones = @filemtime(__DIR__ . '/../js/funciones.js') ?: time();
 		$verJsSegNav = @filemtime(__DIR__ . '/../js/seguridad-navegacion.js') ?: time();
 		$verJsPwa = @filemtime(__DIR__ . '/../js/pwa-install.js') ?: time();
+		$verJsCosta = @filemtime(__DIR__ . '/../js/costa-clara.js') ?: time();
 	?>
-	
+
 	<!-- PWA Manifest -->
 	<link rel="manifest" href="../manifest.json">
-	
+
 	<!-- Favicon e iconos para iOS (evita 404 favicon.ico) -->
 	<link rel="icon" href="../img/apple-touch-icon.png" type="image/png">
 	<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
-	
+
 	<link rel="stylesheet" href="../librerias/bootstrap/css/bootstrap.min.css?v=<?php echo (int)$verCssBootstrap; ?>">
-	<link rel="stylesheet" href="../css/villa-group-theme.css?v=<?php echo (int)$verCssTheme; ?>">
-	<link rel="stylesheet" href="../css/menu.css?v=<?php echo (int)$verCssMenu; ?>">
 	<link rel="stylesheet" href="../librerias/alertifyjs/css/alertify.css?v=<?php echo (int)$verCssAlertify; ?>">
 	<link rel="stylesheet" href="../librerias/alertifyjs/css/themes/default.css?v=<?php echo (int)$verCssAlertifyTheme; ?>">
+	<link rel="stylesheet" href="../css/costa-clara.css?v=<?php echo (int)$verCssCosta; ?>">
 	<script src="../librerias/jquery-3.2.1.min.js?v=<?php echo (int)$verJsJquery; ?>"></script>
 	<script src="../librerias/bootstrap/js/bootstrap.min.js?v=<?php echo (int)$verJsBootstrap; ?>"></script>
 	<script src="../librerias/alertifyjs/alertify.min.js?v=<?php echo (int)$verJsAlertify; ?>"></script>
 	<script src="../js/funciones.js?v=<?php echo (int)$verJsFunciones; ?>"></script>
 	<script src="../js/seguridad-navegacion.js?v=<?php echo (int)$verJsSegNav; ?>"></script>
 	<script src="../js/pwa-install.js?v=<?php echo (int)$verJsPwa; ?>"></script>
-	<style>
-		.footer-global-villa {
-			position: fixed;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			z-index: 1030;
-			text-align: center;
-			background: rgba(15, 15, 15, 0.92);
-			color: #d7d7d7;
-			border-top: 1px solid #333;
-			padding: 6px 10px;
-			font-size: 12px;
-			letter-spacing: 0.4px;
-		}
-		body {
-			padding-bottom: 30px;
-		}
-	</style>
+	<script src="../js/costa-clara.js?v=<?php echo (int)$verJsCosta; ?>"></script>
 </head>
 <body>
 
-<!-- Begin Navbar -->
-<div id="nav">
-  <div class="navbar navbar-inverse navbar-fixed-top" data-spy="affix" data-offset-top="100">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand logo-link logo-mobile" href="<?php echo htmlspecialchars($vistasBase . $homePage); ?>"><span class="logo-wrap"><img class="logo" src="../img/p9anie6p.png" alt="Villa Group"></span></a>
-      </div>
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav nav-logo-row">
-          <li class="logo-nav-item">
-            <a class="logo-link logo-desktop" href="<?php echo htmlspecialchars($vistasBase . $homePage); ?>"><span class="logo-wrap"><img class="logo" src="../img/p9anie6p.png" alt="Villa Group"></span></a>
-          </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
+<div class="cc-app" id="ccApp">
+	<div class="cc-velo-menu" data-cc-cerrar-menu></div>
+	<aside class="cc-side" aria-label="Menú principal">
+		<a class="cc-marca" href="<?php echo htmlspecialchars($vb . $homePage); ?>">
+			<span class="cc-marca__logo"><img src="../img/p9anie6p.png" alt="The Villa Group"></span>
+			<span class="cc-marca__txt"><span class="cc-marca__nombre">Gestión de Equipos</span><span class="cc-marca__sub">The Villa Group</span></span>
+		</a>
+		<nav class="cc-nav">
+			<?php ccItemMenu($vb . $homePage, $es_toalleros ? 'toallas' : 'inicio', $es_toalleros ? 'Control de toallas' : 'Inicio', $a === $homePage); ?>
 
-          <li <?php echo (basename($_SERVER['PHP_SELF']) == $homePage) ? 'class="active"' : ''; ?>><a href="<?php echo htmlspecialchars($vistasBase . $homePage); ?>"><span class="glyphicon glyphicon-home"></span> Inicio</a></li>
+			<?php if ($es_toalleros): ?>
+				<?php ccItemMenu($vb . 'historialToallas.php', 'reloj', 'Historial', $a === 'historialToallas.php'); ?>
+			<?php else: ?>
+				<div class="cc-nav__sec"><span>Inventario</span></div>
+				<?php ccItemMenu($vb . 'equipos.php', 'equipos', 'Equipos', $a === 'equipos.php'); ?>
+				<?php ccItemMenu($vb . 'resguardos.php', 'resguardos', 'Resguardos', $a === 'resguardos.php' || $a === 'nuevoResguardo.php'); ?>
+				<?php ccItemMenu($vb . 'solicitudAltaEquipos.php', 'solicitudes', 'Solicitudes de alta', $a === 'solicitudAltaEquipos.php'); ?>
 
-        <?php if (!$es_toalleros): ?>
-	        <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span> Administrar Equipos <span class="caret"></span></a>
-	          <ul class="dropdown-menu">
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>equipos.php">Equipos</a></li>
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>departamentos.php">Departamentos</a></li>
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>fases.php">Fases</a></li>
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>areas.php">Áreas</a></li>
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>resguardos.php">Resguardos</a></li>
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>solicitudAltaEquipos.php">Solicitud Alta Equipos</a></li>
-	          </ul>
-	        </li>
+				<div class="cc-nav__sec"><span>Bajas</span></div>
+				<?php ccItemMenu($vb . 'bajas.php', 'baja', 'Baja individual', $a === 'bajas.php'); ?>
+				<?php ccItemMenu($vb . 'bajasMasivas.php', 'bajas-masivas', 'Bajas masivas', $a === 'bajasMasivas.php'); ?>
 
-	        <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-remove-circle"></span> Bajas <span class="caret"></span></a>
-	          <ul class="dropdown-menu">
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>bajas.php">Registrar Bajas</a></li>
-	            <li><a href="<?php echo htmlspecialchars($vistasBase); ?>bajasMasivas.php">Bajas Masivas</a></li>
-	          </ul>
-	        </li>
-        <?php endif; ?>
+				<div class="cc-nav__sec"><span>Catálogos</span></div>
+				<?php ccItemMenu($vb . 'departamentos.php', 'departamentos', 'Departamentos', $a === 'departamentos.php'); ?>
+				<?php ccItemMenu($vb . 'areas.php', 'areas', 'Áreas', $a === 'areas.php'); ?>
+				<?php ccItemMenu($vb . 'fases.php', 'fases', 'Fases', $a === 'fases.php'); ?>
+			<?php endif; ?>
 
-        <?php if ($es_toalleros): ?>
-        	<li <?php echo (basename($_SERVER['PHP_SELF']) == 'historialToallas.php') ? 'class="active"' : ''; ?>><a href="<?php echo htmlspecialchars($vistasBase); ?>historialToallas.php"><span class="glyphicon glyphicon-list-alt"></span> Historial</a></li>
-        <?php endif; ?>
+			<?php if ($es_super_admin): ?>
+				<div class="cc-nav__sec"><span>Administración</span></div>
+				<?php ccItemMenu($vb . 'usuarios.php', 'usuarios', 'Usuarios', $a === 'usuarios.php'); ?>
+				<?php ccItemMenu($vb . 'backup.php', 'respaldo', 'Respaldo de base de datos', $a === 'backup.php'); ?>
+			<?php endif; ?>
+		</nav>
+		<div class="cc-side__pie cc-nav">
+			<button type="button" class="cc-nav__item" data-cc-tema title="Cambiar tema"><i data-i="luna"></i><span data-cc-tema-texto>Modo oscuro</span></button>
+			<button type="button" class="cc-nav__item cc-solo-escritorio" data-cc-colapsar title="Colapsar menú"><i data-i="colapsar"></i><span>Colapsar menú</span></button>
+			<div class="cc-side__credito">© Gestión 2026 · Axl Nava</div>
+		</div>
+	</aside>
 
-      <?php
-      // Solo el Super Administrador (ID = 1) puede crear usuarios y descargar respaldo de BD.
-      // Los administradores de villa no ven estas opciones.
-      if(isset($_SESSION['iduser']) && (int)$_SESSION['iduser'] === 1):
-       ?>
-        <li><a href="<?php echo htmlspecialchars($vistasBase); ?>usuarios.php"><span class="glyphicon glyphicon-user"></span> Administrar usuarios</a></li>
-        <li><a href="<?php echo htmlspecialchars($vistasBase); ?>backup.php"><span class="glyphicon glyphicon-save-file"></span> Respaldo BD</a></li>
-      <?php endif; ?>
-
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> <?php 
-            if(isset($_SESSION['nombre']) && isset($_SESSION['apellido'])){
-                echo htmlspecialchars($_SESSION['nombre'] . ' ' . $_SESSION['apellido']);
-            } else {
-                echo htmlspecialchars($_SESSION['usuario']);
-            }
-            // Super Admin (id=1) no pertenece a ninguna villa; el resto muestra su hotel
-            if (isset($_SESSION['iduser']) && (int)$_SESSION['iduser'] === 1) {
-                echo ' <span class="text-muted">| Super Administrador</span>';
-            } elseif (!empty($_SESSION['nombre_hotel'])) {
-                echo ' <span class="text-muted">| ' . htmlspecialchars($_SESSION['nombre_hotel']) . '</span>';
-            }
-          ?> <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="<?php echo htmlspecialchars($urlSalir); ?>" id="link-salir"><span class="glyphicon glyphicon-log-out"></span> Salir</a></li>
-          </ul>
-        </li>
-
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-fluid" style="margin-top: 100px; padding-left: 10px; padding-right: 10px; max-width: 100%;">
-	<?php if (count($breadcrumbTrail) > 1): ?>
-	<nav aria-label="breadcrumb" style="margin-bottom: 12px; text-align: center;">
-		<ol class="breadcrumb" style="background: #1f1f1f; border: 1px solid #333; margin-bottom: 0; display: inline-flex; align-items: center; justify-content: center;">
-			<?php
-				$totalCrumbs = count($breadcrumbTrail);
-				for ($i = 0; $i < $totalCrumbs; $i++):
-					$item = $breadcrumbTrail[$i];
-					$esUltimo = ($i === $totalCrumbs - 1);
-			?>
-				<?php if ($esUltimo): ?>
-					<li class="active" aria-current="page"><?php echo htmlspecialchars($item['label']); ?></li>
-				<?php else: ?>
-					<li><a href="<?php echo htmlspecialchars($item['url']); ?>"><?php echo htmlspecialchars($item['label']); ?></a></li>
-				<?php endif; ?>
-			<?php endfor; ?>
-		</ol>
-	</nav>
-	<?php endif; ?>
-
-<div class="footer-global-villa">© GESTION 2026 --AXL NAVA-- TODOS LOS DERECHOS RESERVADOS</div>
+	<div class="cc-main">
+		<header class="cc-top">
+			<button type="button" class="cc-btn cc-btn--fantasma cc-btn--icono cc-solo-movil" data-cc-abrir-menu aria-label="Abrir menú"><i data-i="menu"></i></button>
+			<span class="cc-hotel" title="Hotel de la sesión"><span class="cc-hotel__punto"><i data-i="hotel"></i></span><span class="cc-solo-escritorio"><?php echo htmlspecialchars($hotelBarra); ?></span></span>
+			<?php if (!$es_toalleros): ?>
+			<form class="cc-buscador cc-solo-escritorio" action="<?php echo htmlspecialchars($vb . 'equipos.php'); ?>" method="get" role="search">
+				<i data-i="buscar"></i>
+				<input class="cc-input" type="search" name="buscar" placeholder="Buscar equipo por código o número de serie" aria-label="Buscar equipo">
+			</form>
+			<?php endif; ?>
+			<div style="flex:1"></div>
+			<div class="dropdown">
+				<a href="#" class="cc-usuario" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="text-decoration:none;color:inherit">
+					<span class="cc-avatar"><?php echo htmlspecialchars($iniciales !== '' ? $iniciales : 'U'); ?></span>
+					<div><div class="cc-usuario__nombre"><?php echo htmlspecialchars($nombreUsuario); ?></div><div class="cc-usuario__rol"><?php echo htmlspecialchars($rolUsuarioTexto); ?></div></div>
+					<i data-i="abajo" class="cc-muted"></i>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#" data-cc-tema><i data-i="luna"></i><span data-cc-tema-texto>Modo oscuro</span></a></li>
+					<li role="separator" class="divider"></li>
+					<li><a href="<?php echo htmlspecialchars($urlSalir); ?>" id="link-salir" style="color:var(--peligro)!important"><i data-i="salir"></i>Cerrar sesión</a></li>
+				</ul>
+			</div>
+		</header>
+		<nav class="cc-migas" aria-label="Migas de pan">
+			<i data-i="inicio"></i>
+			<?php if ($archivoActual === $homePage): ?>
+				<b><?php echo htmlspecialchars($migaActual[1]); ?></b>
+			<?php else: ?>
+				<a href="<?php echo htmlspecialchars($vb . $homePage); ?>" style="color:inherit;font-weight:400">Inicio</a>
+				<?php if ($migaActual[0] !== null): ?><i data-i="derecha"></i><span><?php echo htmlspecialchars($migaActual[0]); ?></span><?php endif; ?>
+				<i data-i="derecha"></i><b><?php echo htmlspecialchars($migaActual[1]); ?></b>
+			<?php endif; ?>
+		</nav>
+		<main class="cc-contenido">

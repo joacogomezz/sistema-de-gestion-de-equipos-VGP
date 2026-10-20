@@ -254,4 +254,4 @@ $dompdf->render();
 
 $nombreArchivo = 'Solicitud_Alta_Equipos_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $cab['numero_solicitud']) . '_' . date('Y-m-d') . '.pdf';
 ob_end_clean();
-$dompdf->stream($nombreArchivo, array("Attachment" => true));
+$dompdf->stream($nombreArchivo, array("Attachment" => empty($_GET['ver'])));

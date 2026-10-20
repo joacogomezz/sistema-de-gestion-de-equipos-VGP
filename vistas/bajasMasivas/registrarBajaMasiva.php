@@ -112,7 +112,7 @@
 					<label>Hotel y Area</label>
 					<?php if ($hotel_auto !== '') { ?>
 					<input type="hidden" id="hotelArea" name="hotelArea" value="<?php echo htmlspecialchars($nombre_hotel); ?>">
-					<input type="text" class="form-control input-sm" value="<?php echo htmlspecialchars($nombre_hotel); ?>" readonly disabled style="background:#eee;">
+					<input type="text" class="form-control input-sm" value="<?php echo htmlspecialchars($nombre_hotel); ?>" readonly disabled>
 					<?php } else { ?>
 					<select class="form-control input-sm" id="hotelArea" name="hotelArea" required>
 						<option value="A" selected>Selecciona hotel y area</option>

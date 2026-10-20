@@ -12,6 +12,7 @@ if (!isset($_SESSION['iduser']) || (int)$_SESSION['iduser'] !== 1) {
 }
 
 require_once __DIR__ . '/../../clases/Conexion.php';
+require_once __DIR__ . '/bitacora.php';
 $c = new conectar();
 $conexion = $c->conexion();
 
@@ -20,12 +21,15 @@ if (!$conexion) {
 	echo 'Error: no se pudo conectar a la base de datos.';
 	exit;
 }
+// Exporta acentos y ñ tal cual están guardados
+mysqli_set_charset($conexion, 'utf8mb4');
 
 $nombre_bd = DB_NAME;
 
 $sql = "-- Respaldo de base de datos: $nombre_bd\n";
 $sql .= "-- Generado: " . date('Y-m-d H:i:s') . "\n";
 $sql .= "-- Sistema de Gestión de Equipos - Hotel Villa Group\n\n";
+$sql .= "SET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS = 0;\n\n";
 $sql .= "CREATE DATABASE IF NOT EXISTS `$nombre_bd`;\nUSE `$nombre_bd`;\n\n";
 
 $res_tablas = mysqli_query($conexion, "SHOW TABLES");
@@ -74,8 +78,10 @@ foreach ($tablas as $tabla) {
 	}
 	$sql .= "\n";
 }
+$sql .= "SET FOREIGN_KEY_CHECKS = 1;\n";
 
 $nombre_archivo = DB_NAME . '_respaldo_' . date('Y-m-d_H-i') . '.sql';
+registrarRespaldo(trim(($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellido'] ?? '')) ?: ($_SESSION['usuario'] ?? 'Administrador'), strlen($sql), $nombre_archivo);
 
 header('Content-Type: application/octet-stream; charset=utf-8');
 header('Content-Disposition: attachment; filename="' . $nombre_archivo . '"');

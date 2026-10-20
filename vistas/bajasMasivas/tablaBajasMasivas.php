@@ -29,18 +29,18 @@
 	#tablaBajasMasivas {
 		width: 100%;
 		table-layout: fixed;
-		font-size: 11px;
+		font-size: 12px;
 	}
 	#tablaBajasMasivas caption {
 		caption-side: top;
-		color: #ccc;
+		color: var(--texto);
 		text-align: left;
 		padding-bottom: 6px;
 	}
 	#tablaBajasMasivas thead th {
-		background-color: #c29a4b;
-		color: #fff;
-		font-weight: bold;
+		background-color: var(--superficie-hundida) !important;
+		color: var(--texto-secundario) !important;
+		font-weight: 500;
 		text-align: center;
 		vertical-align: middle;
 	}
@@ -48,9 +48,9 @@
 		white-space: normal;
 		word-break: normal;
 		overflow-wrap: anywhere;
-		line-height: 1.2;
+		line-height: 1.3;
 		vertical-align: middle;
-		padding: 6px 4px;
+		padding: 8px 6px !important;
 	}
 	#tablaBajasMasivas th:nth-child(1), #tablaBajasMasivas td:nth-child(1) { width: 5%; }
 	#tablaBajasMasivas th:nth-child(2), #tablaBajasMasivas td:nth-child(2) { width: 8%; }

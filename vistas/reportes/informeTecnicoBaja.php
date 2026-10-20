@@ -341,7 +341,7 @@ if(isset($_SESSION['usuario'])){
 	$nombreArchivo = 'Informe_Baja_' . $equipo[0] . '_' . date('Y-m-d', strtotime($equipo[12])) . '.pdf';
 
 	// Descargar el PDF
-	$dompdf->stream($nombreArchivo, array("Attachment" => true));
+	$dompdf->stream($nombreArchivo, array("Attachment" => empty($_GET['ver'])));
 } else {
 	echo "Error: No hay sesión activa";
 }

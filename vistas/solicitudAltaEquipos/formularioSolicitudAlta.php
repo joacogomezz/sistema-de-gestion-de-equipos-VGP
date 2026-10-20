@@ -36,13 +36,13 @@ $fecha_hoy = date('Y-m-d');
 ?>
 <style>
 	#frmSolicitudAlta .form-seccion { margin-bottom: 28px; }
-	#frmSolicitudAlta label { display: block; margin-bottom: 8px; font-weight: 600; color: #e0e0e0; }
+	#frmSolicitudAlta label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--texto); }
 	#frmSolicitudAlta .row + .row { margin-top: 20px; }
 	#frmSolicitudAlta .row .form-group { margin-bottom: 0; }
 	#tablaEquiposSolicitud { margin-top: 12px; width: 100%; min-width: 1100px; }
 	#tablaEquiposSolicitud th, #tablaEquiposSolicitud td { padding: 6px 6px !important; vertical-align: middle !important; overflow: hidden; }
 	#tablaEquiposSolicitud thead th {
-		background: #3a3a3a; color: #c29a4b; font-weight: 600;
+		background: var(--superficie-hundida) !important; color: var(--texto-secundario) !important; font-weight: 500;
 		white-space: normal; word-wrap: break-word; font-size: 11px; line-height: 1.2;
 		min-width: 60px; max-width: 120px;
 	}
@@ -52,7 +52,7 @@ $fecha_hoy = date('Y-m-d');
 	#tablaEquiposSolicitud thead th:nth-child(12) { min-width: 95px; }
 	#tablaEquiposSolicitud thead th:nth-child(13) { min-width: 95px; }
 	#tablaEquiposSolicitud thead th:nth-child(14) { width: 50px; min-width: 50px; }
-	#tablaEquiposSolicitud tbody td { background: #252525; }
+	#tablaEquiposSolicitud tbody td { background: var(--superficie); }
 	/* Campos al 100% de la celda, texto visible, altura consistente */
 	#tablaEquiposSolicitud input.form-control,
 	#tablaEquiposSolicitud select.form-control {
@@ -64,28 +64,29 @@ $fecha_hoy = date('Y-m-d');
 		padding: 6px 8px !important;
 		font-size: 13px !important;
 		line-height: 1.4 !important;
-		background-color: #2a2a2a !important;
-		color: #ffffff !important;
-		border: 1px solid #444 !important;
-		border-radius: 4px;
+		background-color: var(--superficie) !important;
+		color: var(--texto) !important;
+		border: 1px solid var(--borde-fuerte) !important;
+		border-radius: var(--radio-sm) !important;
 		display: block;
 	}
 	#tablaEquiposSolicitud input.form-control::placeholder {
-		color: #999 !important;
+		color: var(--texto-secundario) !important;
 	}
 	#tablaEquiposSolicitud input.form-control:focus,
 	#tablaEquiposSolicitud select.form-control:focus {
-		background-color: #333 !important;
-		color: #ffffff !important;
-		border-color: #c29a4b !important;
+		background-color: var(--superficie) !important;
+		color: var(--texto) !important;
+		border-color: var(--dorado) !important;
+		box-shadow: 0 0 0 3px var(--dorado-suave) !important;
 		outline: none;
 	}
 	#tablaEquiposSolicitud select.form-control option {
-		background: #2a2a2a;
-		color: #ffffff;
+		background: var(--superficie);
+		color: var(--texto);
 	}
 	#tablaEquiposSolicitud tbody td:last-child { width: 50px; text-align: center; }
-	.frm-titulo-seccion { font-size: 16px; color: #c29a4b; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #444; }
+	.frm-titulo-seccion { font-size: 15px; font-weight: 600; color: var(--texto); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--borde); }
 	.btn-area-pdf { margin-top: 8px; padding: 12px 24px; font-size: 15px; }
 </style>
 <h4 class="frm-titulo-seccion">Datos de la solicitud</h4>

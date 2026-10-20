@@ -166,4 +166,4 @@ $dompdf->render();
 
 $nombreArchivo = 'Resguardo_' . $esc($d['codigo_equipo']) . '_' . date('Y-m-d') . '.pdf';
 ob_end_clean();
-$dompdf->stream($nombreArchivo, array("Attachment" => true));
+$dompdf->stream($nombreArchivo, array("Attachment" => empty($_GET['ver'])));

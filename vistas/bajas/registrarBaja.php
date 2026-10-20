@@ -24,7 +24,7 @@
 							   spellcheck="false"
 							   data-lpignore="true">
 						<input type="hidden" id="equipoBaja" name="equipoBaja" value="">
-						<div id="sugerenciasEquipos" class="list-group" style="display: none; max-height: 200px; overflow-y: auto; position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; border: 2px solid #337ab7; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"></div>
+						<div id="sugerenciasEquipos" class="list-group" style="display: none; max-height: 200px; overflow-y: auto; position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; "></div>
 					</div>
 					<small class="text-muted">Escribe el código del equipo para buscarlo automáticamente</small>
 				</div>
@@ -104,7 +104,7 @@
 
 			<div class="row">
 				<div class="col-sm-12">
-					<h4 style="color: #c29a4b; margin-top: 20px; margin-bottom: 15px;">
+					<h4 style="color: var(--texto); font-size: 15px; font-weight: 600; margin-top: 20px; margin-bottom: 15px;">
 						<span class="glyphicon glyphicon-user"></span> Responsables de la Baja
 					</h4>
 				</div>
@@ -136,19 +136,21 @@
 	.sugerencia-equipo {
 		cursor: pointer;
 		padding: 8px 12px;
-		border-bottom: 1px solid #eee;
-		color: #333;
+		border-bottom: 1px solid var(--borde);
+		color: var(--texto);
 	}
 	.sugerencia-equipo:hover {
-		background-color: #f5f5f5;
-		color: #000;
+		background-color: var(--superficie-hundida);
+		color: var(--texto);
 	}
 	.sugerencia-equipo:last-child {
 		border-bottom: none;
 	}
 	#sugerenciasEquipos {
-		background-color: white;
-		border: 2px solid #337ab7 !important;
+		background-color: var(--superficie);
+		border: 1px solid var(--borde) !important;
+		border-radius: var(--radio-md);
+		box-shadow: var(--sombra-2);
 	}
 	#sugerenciasEquipos .list-group-item {
 		border: none;
@@ -415,7 +417,7 @@
 				
 				var reader = new FileReader();
 				reader.onload = function(e){
-					$('#previewFotoEquipo').html('<img src="' + e.target.result + '" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc;">');
+					$('#previewFotoEquipo').html('<img src="' + e.target.result + '" style="max-width: 150px; max-height: 150px; border: 1px solid var(--borde); border-radius: var(--radio-sm);">');
 				}
 				reader.readAsDataURL(file);
 			}
@@ -434,7 +436,7 @@
 				
 				var reader = new FileReader();
 				reader.onload = function(e){
-					$('#previewFotoEtiqueta').html('<img src="' + e.target.result + '" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc;">');
+					$('#previewFotoEtiqueta').html('<img src="' + e.target.result + '" style="max-width: 150px; max-height: 150px; border: 1px solid var(--borde); border-radius: var(--radio-sm);">');
 				}
 				reader.readAsDataURL(file);
 			}

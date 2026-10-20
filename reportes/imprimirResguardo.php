@@ -16,17 +16,18 @@ if ($id <= 0) {
 	exit;
 }
 
+$ver = !empty($_GET['ver']) ? '&ver=1' : '';
 $obj = new Resguardos();
 $ids = $obj->obtenerIdsMismoGrupo($id);
 if (!$ids) {
-	header('Location: reporteResguardo.php?id=' . $id);
+	header('Location: reporteResguardo.php?id=' . $id . $ver);
 	exit;
 }
 
 if (count($ids) === 1) {
-	header('Location: reporteResguardo.php?id=' . $ids[0]);
+	header('Location: reporteResguardo.php?id=' . $ids[0] . $ver);
 	exit;
 }
 
-header('Location: reporteResguardoMultiple.php?ids=' . implode(',', $ids));
+header('Location: reporteResguardoMultiple.php?ids=' . implode(',', $ids) . $ver);
 exit;

@@ -44,6 +44,12 @@
 				exit;
 			}
 		}
+		// Pantalla nueva del toallero; la anterior sigue disponible con ?clasica=1
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !isset($_GET['clasica'])) {
+			define('CC_TOALLAS', 1);
+			require __DIR__ . '/toallas/panel.php';
+			exit;
+		}
 		$solicitudes = $toallas->obtenerSolicitudesActivasHotel($id_hotel_toallas, 120);
 		$resumenToallas = $toallas->obtenerResumenToallas($id_hotel_toallas);
 		$baseNoDevueltasHistorial = isset($resumenToallas['no_devueltas_historial']) ? (int)$resumenToallas['no_devueltas_historial'] : 0;
@@ -55,26 +61,26 @@
 			<style>
 				/* Estilos específicos para tabla de toallas en tema oscuro */
 				.tabla-toallas thead th {
-					background: #a86f2e !important;
-					color: #fff !important;
-					border-color: #704a1f !important;
+					background: var(--superficie-hundida) !important;
+					color: var(--texto-secundario) !important;
+					border-color: var(--borde) !important;
 				}
 				.tabla-toallas tbody td {
-					color: #f5f5f5 !important;
-					border-color: #333 !important;
+					color: var(--texto) !important;
+					border-color: var(--borde) !important;
 				}
 				.tabla-toallas tbody tr.success td,
 				.tabla-toallas tbody tr.success:hover td {
-					background-color: #1f4d2f !important; /* verde oscuro */
+					background-color: var(--exito-suave) !important;
 				}
 				.tabla-toallas tbody tr.danger td,
 				.tabla-toallas tbody tr.danger:hover td {
-					background-color: #5a1f24 !important; /* rojo oscuro */
+					background-color: var(--peligro-suave) !important;
 				}
 				.tabla-toallas input.form-control {
-					background: #1a1a1a !important;
-					color: #fff !important;
-					border: 1px solid #555 !important;
+					background: var(--superficie) !important;
+					color: var(--texto) !important;
+					border: 1px solid var(--borde-fuerte) !important;
 				}
 			</style>
 			<div class="jumbotron">
@@ -98,15 +104,15 @@
 				}
 				/* Cajas personalizadas (sin estilos alert de Bootstrap) */
 				.toallas-alert-entregadas {
-					background: #222 !important;
-					border: 1px solid #2f2f2f !important;
-					color: #fff !important;
+					background: var(--superficie-hundida) !important;
+					border: 1px solid var(--borde) !important;
+					color: var(--texto) !important;
 					padding: 16px 14px !important;
 				}
 				.toallas-alert-faltantes {
-					background: #222 !important;
-					border: 1px solid #2f2f2f !important;
-					color: #fff !important;
+					background: var(--superficie-hundida) !important;
+					border: 1px solid var(--borde) !important;
+					color: var(--texto) !important;
 					padding: 18px 10px !important;
 					display: flex;
 					flex-direction: column;
@@ -150,7 +156,7 @@
 						font-weight: 700;
 					}
 					.toallas-alert-entregadas #resumenToallasEntregadas {
-						color: #2dd48a !important;
+						color: var(--exito) !important;
 					}
 					.toallas-alert-faltantes {
 						flex: 1;
@@ -160,21 +166,21 @@
 						font-size: 24px;
 						font-weight: 700;
 						line-height: 1.2;
-						color: #fff !important;
+						color: var(--texto) !important;
 					}
 					.toallas-alert-faltantes .numero-faltantes {
 						font-size: 76px;
 						font-weight: 900;
 						line-height: 1;
 						margin-top: 8px;
-						color: #ff5b5b !important;
+						color: var(--peligro) !important;
 					}
 				/* Color de números en cualquier tamaño (incluye móvil) */
 				.toallas-alert-entregadas #resumenToallasEntregadas {
-					color: #2dd48a !important;
+					color: var(--exito) !important;
 				}
 				.toallas-alert-faltantes #resumenToallasPendientes {
-					color: #ff5b5b !important;
+					color: var(--peligro) !important;
 				}
 				}
 				@media (max-width: 767px) {
@@ -233,7 +239,7 @@
 				}
 				/* Forzar color de números en todos los tamaños (incluye celular) */
 				#toallasResumenPanel #resumenToallasEntregadas {
-					color: #2dd48a !important;
+					color: var(--exito) !important;
 					font-size: 42px !important;
 					font-weight: 900 !important;
 					line-height: 1.05 !important;
@@ -241,7 +247,7 @@
 					margin-left: 8px;
 				}
 				#toallasResumenPanel #resumenToallasPendientes {
-					color: #ff5b5b !important;
+					color: var(--peligro) !important;
 					font-size: 96px !important;
 					font-weight: 900 !important;
 					line-height: 1 !important;
@@ -539,289 +545,222 @@
 	}
 	?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Sistema de Gestión de Equipos - Hotel Villa Group</title>
-	<style>
-		:root {
-			--villa-dark: #1a1a1a;
-			--villa-darker: #0f0f0f;
-			--villa-light: #2a2a2a;
-			--villa-white: #ffffff;
-			--villa-gold: #c29a4b;
-			--villa-gold-hover: #d4a85c;
-			--villa-orange: #a0522d;
-			--villa-orange-hover: #b05a35;
-			--villa-text: #ffffff;
-			--villa-text-muted: #cccccc;
-			--villa-border: #333333;
-		}
+<?php
+	require_once "../clases/Conexion.php";
+	$c = new conectar();
+	$conexion = $c->conexion();
+	$es_super_admin = isset($_SESSION['iduser']) && (int)$_SESSION['iduser'] === 1;
+	$id_hotel = $es_super_admin ? null : (isset($_SESSION['id_hotel']) ? (int) $_SESSION['id_hotel'] : null);
+	$whereHotel = '';
+	$whereHotelDirecto = '';
+	if ($id_hotel !== null) {
+		$whereHotel = " AND e.id_departamento IN (SELECT id_departamento FROM departamentos WHERE id_hotel = " . $id_hotel . ")";
+		$whereHotelDirecto = " AND id_hotel = " . $id_hotel;
+	}
 
-		html, body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background: linear-gradient(135deg, var(--villa-dark) 0%, var(--villa-darker) 100%);
-			min-height: 100vh;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			color: var(--villa-text);
-		}
-		
-		/* Asegurar que el fondo cubra toda la página */
-		html {
-			background: linear-gradient(135deg, var(--villa-dark) 0%, var(--villa-darker) 100%);
-			background-attachment: fixed;
-		}
-		
-		/* Eliminar cualquier margen o padding que pueda causar espacios blancos */
-		* {
-			box-sizing: border-box;
-		}
-		
-		/* Asegurar que el contenedor principal también tenga el fondo correcto */
-		.container {
-			background: transparent;
-		}
-		
-		/* Sobrescribir el padding-top del menu.css para eliminar espacios blancos */
-		body {
-			padding-top: 0 !important;
-		}
-		
-		/* Asegurar que el navbar no deje espacios blancos */
-		.navbar {
-			background: var(--villa-dark) !important;
-		}
-		
-		/* Asegurar que el fondo se mantenga fijo durante el scroll */
-		body {
-			background-attachment: fixed !important;
-			background-repeat: no-repeat !important;
-			background-size: cover !important;
-		}
+	function ccValor($conexion, $sql) {
+		$r = mysqli_query($conexion, $sql);
+		$f = $r ? mysqli_fetch_row($r) : null;
+		return $f ? (int)$f[0] : 0;
+	}
 
-		.jumbotron {
-			background: var(--villa-light) !important;
-			border: 2px solid var(--villa-border) !important;
-			border-radius: 15px !important;
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-		}
+	$porEstado = array('Activo' => 0, 'En Mantenimiento' => 0, 'En Reparación' => 0, 'Dado de Baja' => 0);
+	$r = mysqli_query($conexion, "SELECT e.estado, COUNT(*) FROM equipos e WHERE 1=1 $whereHotel GROUP BY e.estado");
+	$total = 0;
+	while ($r && ($f = mysqli_fetch_row($r))) {
+		$total += (int)$f[1];
+		if (isset($porEstado[$f[0]])) $porEstado[$f[0]] += (int)$f[1];
+	}
+	$activos = $porEstado['Activo'];
+	$mantenimiento = $porEstado['En Mantenimiento'];
+	$reparacion = $porEstado['En Reparación'];
+	$bajas = $porEstado['Dado de Baja'];
+	$numDeptos = ccValor($conexion, "SELECT COUNT(*) FROM departamentos WHERE 1=1 $whereHotelDirecto");
+	$bajasMes = ccValor($conexion, "SELECT COUNT(*) FROM bajas_equipos WHERE fecha_baja >= DATE_FORMAT(CURDATE(), '%Y-%m-01') $whereHotelDirecto");
 
-		.jumbotron h1, .jumbotron h2, .jumbotron p {
-			color: var(--villa-gold) !important;
-		}
+	$porDepto = array();
+	$r = mysqli_query($conexion, "SELECT d.nombre, COUNT(*) n FROM equipos e JOIN departamentos d ON d.id_departamento = e.id_departamento WHERE 1=1 $whereHotel GROUP BY d.id_departamento, d.nombre ORDER BY n DESC LIMIT 8");
+	while ($r && ($f = mysqli_fetch_row($r))) $porDepto[] = array($f[0], (int)$f[1]);
+	$maxDepto = $porDepto ? max(1, $porDepto[0][1]) : 1;
 
-		.panel {
-			background: var(--villa-light) !important;
-			border: 2px solid var(--villa-border) !important;
-			border-radius: 10px !important;
-			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
-		}
+	// Actividad reciente: se combinan las últimas altas, resguardos, bajas y solicitudes.
+	$actividad = array();
+	$r = mysqli_query($conexion, "SELECT e.id_equipo, e.codigo_equipo, e.descripcion, e.marca, e.modelo, d.nombre, e.fecha_registro FROM equipos e LEFT JOIN departamentos d ON d.id_departamento = e.id_departamento WHERE e.fecha_registro IS NOT NULL $whereHotel ORDER BY e.id_equipo DESC LIMIT 6");
+	while ($r && ($f = mysqli_fetch_row($r))) {
+		$actividad[] = array('tipo' => 'alta', 'orden' => $f[6] . ' 00:00:00', 'fecha' => $f[6], 'hora' => false,
+			'titulo' => 'Alta de equipo', 'codigo' => $f[1], 'detalle' => trim($f[2] . ' · ' . trim($f[3] . ' ' . $f[4]), ' ·'), 'meta' => (string)$f[5]);
+	}
+	$r = mysqli_query($conexion, "SELECT r.id_resguardo, e.codigo_equipo, r.usuario, r.area_destino, r.fecha_registro FROM resguardos r JOIN equipos e ON e.id_equipo = r.id_equipo WHERE 1=1 $whereHotel ORDER BY r.fecha_registro DESC, r.id_resguardo DESC LIMIT 6");
+	while ($r && ($f = mysqli_fetch_row($r))) {
+		$actividad[] = array('tipo' => 'resguardo', 'orden' => $f[4], 'fecha' => $f[4], 'hora' => true,
+			'titulo' => 'Resguardo de', 'codigo' => $f[1], 'detalle' => 'para ' . $f[2], 'meta' => (string)$f[3]);
+	}
+	$r = mysqli_query($conexion, "SELECT b.id_baja, e.codigo_equipo, e.descripcion, b.motivo_baja, d.nombre, b.fecha_baja FROM bajas_equipos b LEFT JOIN equipos e ON e.id_equipo = b.id_equipo LEFT JOIN departamentos d ON d.id_departamento = b.id_departamento WHERE 1=1" . ($id_hotel !== null ? " AND b.id_hotel = $id_hotel" : '') . " ORDER BY b.fecha_baja DESC, b.id_baja DESC LIMIT 6");
+	while ($r && ($f = mysqli_fetch_row($r))) {
+		$actividad[] = array('tipo' => 'baja', 'orden' => $f[5] . ' 00:00:00', 'fecha' => $f[5], 'hora' => false,
+			'titulo' => 'Baja de', 'codigo' => $f[1], 'detalle' => trim($f[2] . ($f[3] ? ' (' . $f[3] . ')' : '')), 'meta' => (string)$f[4]);
+	}
+	$r = mysqli_query($conexion, "SELECT bm.id_baja_masiva, bm.total_equipos, bm.motivo_baja, d.nombre, bm.fecha_baja FROM bajas_masivas bm LEFT JOIN departamentos d ON d.id_departamento = bm.id_departamento WHERE 1=1" . ($id_hotel !== null ? " AND bm.id_hotel = $id_hotel" : '') . " ORDER BY bm.fecha_baja DESC LIMIT 4");
+	while ($r && ($f = mysqli_fetch_row($r))) {
+		$actividad[] = array('tipo' => 'masiva', 'orden' => $f[4] . ' 00:00:00', 'fecha' => $f[4], 'hora' => false,
+			'titulo' => 'Baja masiva', 'codigo' => '', 'detalle' => (int)$f[1] . ' equipos' . ($f[2] ? ' · ' . $f[2] : ''), 'meta' => (string)$f[3]);
+	}
+	usort($actividad, function ($x, $y) { return strcmp($y['orden'], $x['orden']); });
+	$actividad = array_slice($actividad, 0, 6);
 
-		.panel-heading {
-			background: var(--villa-gold) !important;
-			border-color: var(--villa-border) !important;
-			color: var(--villa-white) !important;
-			border-radius: 8px 8px 0 0 !important;
-		}
+	$solicitudes = array();
+	$r = mysqli_query($conexion, "SELECT s.numero_solicitud, s.cantidad_equipos, d.nombre, s.fecha_registro, s.clasificacion_1 FROM solicitud_alta_equipos s LEFT JOIN departamentos d ON d.id_departamento = s.id_departamento_solicitante WHERE 1=1" . ($id_hotel !== null ? " AND s.id_hotel = $id_hotel" : '') . " ORDER BY s.fecha_registro DESC LIMIT 4");
+	while ($r && ($f = mysqli_fetch_row($r))) $solicitudes[] = $f;
+	$totalSolicitudes = ccValor($conexion, "SELECT COUNT(*) FROM solicitud_alta_equipos WHERE 1=1 $whereHotelDirecto");
 
-		.panel-body {
-			background: var(--villa-light) !important;
-			color: var(--villa-text) !important;
-			text-align: center !important;
-		}
+	$meses = array('ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic');
+	$mesesLargos = array('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre');
+	$dias = array('domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado');
+	function ccCuando($fecha, $conHora, $meses) {
+		$ts = strtotime((string)$fecha);
+		if ($ts === false) return '';
+		$hoy = date('Y-m-d');
+		$dia = date('Y-m-d', $ts);
+		$hora = $conHora ? ', ' . date('H:i', $ts) : '';
+		if ($dia === $hoy) return 'Hoy' . $hora;
+		if ($dia === date('Y-m-d', strtotime('-1 day'))) return 'Ayer' . $hora;
+		return (int)date('j', $ts) . ' ' . $meses[(int)date('n', $ts) - 1] . ' ' . date('Y', $ts);
+	}
+	function ccPct($n, $total) { return $total > 0 ? number_format($n * 100 / $total, 1) : '0.0'; }
 
-		.panel-body h2 {
-			color: var(--villa-gold) !important;
-			font-size: 2.5em !important;
-			font-weight: bold !important;
-			margin-bottom: 10px !important;
-		}
+	$horaActual = (int)date('G');
+	$saludo = $horaActual < 12 ? 'Buenos días' : ($horaActual < 19 ? 'Buenas tardes' : 'Buenas noches');
+	$primerNombre = isset($_SESSION['nombre']) ? trim(explode(' ', trim((string)$_SESSION['nombre']))[0]) : '';
+	$alcance = $es_super_admin ? 'Todos los hoteles' : (!empty($_SESSION['nombre_hotel']) ? $_SESSION['nombre_hotel'] : 'Hotel');
+	$fechaHoy = $dias[(int)date('w')] . ' ' . (int)date('j') . ' de ' . $mesesLargos[(int)date('n') - 1] . ' de ' . date('Y');
 
-		.panel-body p {
-			color: var(--villa-text-muted) !important;
-			font-size: 14px !important;
-			margin: 0 !important;
-		}
+	// Dona por estado: circunferencia de r=60.
+	$circ = 2 * M_PI * 60;
+	$segmentos = array(
+		array('s-activo', 'bg-activo', 'Activo', $activos),
+		array('s-mant', 'bg-mant', 'En mantenimiento', $mantenimiento),
+		array('s-rep', 'bg-rep', 'En reparación', $reparacion),
+		array('s-baja', 'bg-baja', 'Dado de baja', $bajas),
+	);
+	$iconosActividad = array('alta' => array('mas', 'cc-tono-exito'), 'resguardo' => array('firma', 'cc-tono-mar'), 'baja' => array('baja', 'cc-tono-peligro'), 'masiva' => array('bajas-masivas', 'cc-tono-peligro'));
 
-		.panel-danger .panel-heading {
-			background: #dc3545 !important;
-			color: var(--villa-white) !important;
-		}
-
-		.panel-info .panel-heading {
-			background: var(--villa-orange) !important;
-			color: var(--villa-white) !important;
-		}
-
-		.panel-default .panel-heading {
-			background: var(--villa-gold) !important;
-			color: var(--villa-white) !important;
-		}
-
-		.list-group-item {
-			background: var(--villa-light) !important;
-			border: 2px solid var(--villa-border) !important;
-			color: var(--villa-text) !important;
-			transition: all 0.3s ease !important;
-			margin-bottom: 5px !important;
-		}
-
-		.list-group-item:hover {
-			background: var(--villa-gold) !important;
-			color: var(--villa-white) !important;
-			transform: translateX(5px) !important;
-			box-shadow: 0 5px 15px rgba(194, 154, 75, 0.3) !important;
-		}
-
-		.list-group-item .glyphicon {
-			margin-right: 10px !important;
-			color: var(--villa-gold) !important;
-		}
-
-		.list-group-item:hover .glyphicon {
-			color: var(--villa-white) !important;
-		}
-
-		.actions-container {
-			max-width: 400px !important;
-			margin: 0 auto !important;
-		}
-	</style>
-</head>
-<body>
-	<?php require_once "menu.php"; ?>
-
-	<div class="container">
-		<div class="jumbotron">
-			<h1>Sistema de Gestión de Equipos</h1>
-			<h2>Hotel Villa Group</h2>
-			<p>Bienvenido al sistema de gestión de equipos del Hotel Villa Group. Aquí podrás administrar todos los equipos, registrar altas y bajas, y gestionar el inventario de manera eficiente.</p>
+	$titulo_pagina = 'Inicio - Sistema de Gestión de Equipos';
+	require_once "menu.php";
+?>
+	<div class="cc-row" style="justify-content:space-between;align-items:flex-end">
+		<div>
+			<h1 style="font:600 28px/36px var(--font-sans);letter-spacing:-.01em;margin:0"><?php echo htmlspecialchars($saludo . ($primerNombre !== '' ? ', ' . $primerNombre : '')); ?></h1>
+			<div class="cc-muted" style="margin-top:4px"><?php echo htmlspecialchars($alcance . ' · ' . $fechaHoy); ?></div>
 		</div>
+	</div>
 
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<h3 class="panel-title">Equipos Activos</h3>
-					</div>
-					<div class="panel-body">
+	<div class="cc-accesos">
+		<a class="cc-acceso cc-acceso--primario" href="equipos.php?nuevo=1"><span class="cc-acceso__ico"><i data-i="mas"></i></span>Registrar equipo<i data-i="derecha"></i></a>
+		<a class="cc-acceso" href="nuevoResguardo.php"><span class="cc-acceso__ico cc-tono-mar"><i data-i="resguardos"></i></span>Nuevo resguardo<i data-i="derecha"></i></a>
+		<a class="cc-acceso" href="bajas.php"><span class="cc-acceso__ico cc-tono-peligro"><i data-i="baja"></i></span>Registrar baja<i data-i="derecha"></i></a>
+		<a class="cc-acceso" href="solicitudAltaEquipos.php"><span class="cc-acceso__ico cc-tono-dorado"><i data-i="solicitudes"></i></span>Solicitud de alta<i data-i="derecha"></i></a>
+	</div>
+
+	<div class="cc-kpis">
+		<div class="cc-card cc-kpi"><div class="cc-kpi__top"><span>Equipos activos</span><span class="cc-kpi__ico cc-tono-exito"><i data-i="equipos"></i></span></div><div class="cc-kpi__valor"><?php echo number_format($activos); ?></div><div class="cc-kpi__pie"><b><?php echo ccPct($activos, $total); ?>%</b> del total</div></div>
+		<div class="cc-card cc-kpi"><div class="cc-kpi__top"><span>En mantenimiento</span><span class="cc-kpi__ico cc-tono-alerta"><i data-i="alerta"></i></span></div><div class="cc-kpi__valor"><?php echo number_format($mantenimiento + $reparacion); ?></div><div class="cc-kpi__pie"><?php echo number_format($mantenimiento); ?> mantenimiento · <?php echo number_format($reparacion); ?> reparación</div></div>
+		<div class="cc-card cc-kpi"><div class="cc-kpi__top"><span>Dados de baja</span><span class="cc-kpi__ico cc-tono-peligro"><i data-i="baja"></i></span></div><div class="cc-kpi__valor"><?php echo number_format($bajas); ?></div><div class="cc-kpi__pie"><b><?php echo number_format($bajasMes); ?></b> registradas este mes</div></div>
+		<div class="cc-card cc-kpi"><div class="cc-kpi__top"><span>Total de equipos</span><span class="cc-kpi__ico cc-tono-mar"><i data-i="hotel"></i></span></div><div class="cc-kpi__valor"><?php echo number_format($total); ?></div><div class="cc-kpi__pie"><?php echo $es_super_admin ? '4 hoteles · ' : ''; ?><?php echo number_format($numDeptos); ?> departamentos</div></div>
+	</div>
+
+	<div class="cc-grid-32">
+		<div class="cc-card">
+			<div class="cc-card__head"><div><h2 class="cc-h2">Equipos por departamento</h2><div class="cc-muted cc-small">Top <?php echo count($porDepto); ?> · número de equipos registrados</div></div><a href="departamentos.php">Ver todos</a></div>
+			<div class="cc-card__body">
+				<?php if ($porDepto): ?>
+				<div class="cc-barras" data-tip-box style="position:relative">
+					<?php foreach ($porDepto as $d): ?>
+					<div class="cc-barra" data-tip="<?php echo htmlspecialchars($d[0] . ': ' . $d[1] . ' equipos'); ?>"><span class="cc-barra__nombre"><?php echo htmlspecialchars($d[0]); ?></span><span class="cc-barra__pista"><span class="cc-barra__fill" style="width:<?php echo number_format($d[1] * 100 / $maxDepto, 1, '.', ''); ?>%"></span></span><span class="cc-barra__val"><?php echo number_format($d[1]); ?></span></div>
+					<?php endforeach; ?>
+				</div>
+				<?php else: ?>
+				<div class="cc-vacio"><b>Sin equipos registrados</b><span class="cc-muted cc-small">Registra el primer equipo para ver esta gráfica.</span></div>
+				<?php endif; ?>
+			</div>
+		</div>
+		<div class="cc-card">
+			<div class="cc-card__head"><div><h2 class="cc-h2">Equipos por estado</h2><div class="cc-muted cc-small"><?php echo number_format($total); ?> equipos · <?php echo htmlspecialchars($alcance); ?></div></div></div>
+			<div class="cc-card__body">
+				<div class="cc-dona" data-tip-box style="position:relative">
+					<svg viewBox="0 0 168 168" role="img" aria-label="Equipos por estado">
 						<?php
-							require_once "../clases/Conexion.php";
-							$c = new conectar();
-							$conexion = $c->conexion();
-							$es_super_admin = isset($_SESSION['iduser']) && (int)$_SESSION['iduser'] === 1;
-							$id_hotel = $es_super_admin ? null : (isset($_SESSION['id_hotel']) ? (int) $_SESSION['id_hotel'] : null);
-							$whereHotel = '';
-							if ($id_hotel !== null) {
-								$chk = @mysqli_query($conexion, "SHOW COLUMNS FROM departamentos LIKE 'id_hotel'");
-								if ($chk && mysqli_num_rows($chk) > 0) {
-									$whereHotel = " AND e.id_departamento IN (SELECT id_departamento FROM departamentos WHERE id_hotel = '" . $id_hotel . "')";
-								}
+							$offset = 0.0;
+							foreach ($segmentos as $s) {
+								if ($s[3] <= 0 || $total <= 0) continue;
+								$largo = $circ * $s[3] / $total;
+								echo '<circle class="seg ' . $s[0] . '" cx="84" cy="84" r="60" stroke-dasharray="' . number_format($largo, 2, '.', '') . ' ' . number_format($circ - $largo, 2, '.', '') . '" stroke-dashoffset="' . number_format(-$offset, 2, '.', '') . '" transform="rotate(-90 84 84)" data-tip="' . htmlspecialchars($s[2] . ': ' . number_format($s[3]) . ' (' . ccPct($s[3], $total) . '%)') . '"/>';
+								$offset += $largo;
 							}
-							$sql = "SELECT COUNT(*) as total FROM equipos e WHERE e.estado='Activo' $whereHotel";
-							$result = mysqli_query($conexion, $sql);
-							$ver = mysqli_fetch_row($result);
 						?>
-						<h2><?php echo (int) $ver[0]; ?></h2>
-						<p>Equipos en funcionamiento</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Dados de Baja</h3>
-					</div>
-					<div class="panel-body">
-						<?php
-							$sql = "SELECT COUNT(*) as total FROM equipos e WHERE e.estado='Dado de Baja' $whereHotel";
-							$result = mysqli_query($conexion, $sql);
-							$ver = mysqli_fetch_row($result);
-						?>
-						<h2><?php echo (int) $ver[0]; ?></h2>
-						<p>Equipos dados de baja</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title">Total Equipos</h3>
-					</div>
-					<div class="panel-body">
-						<?php
-							$sql = "SELECT COUNT(*) as total FROM equipos e WHERE 1=1 $whereHotel";
-							$result = mysqli_query($conexion, $sql);
-							$ver = mysqli_fetch_row($result);
-						?>
-						<h2><?php echo (int) $ver[0]; ?></h2>
-						<p>Total de equipos registrados</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="glyphicon glyphicon-file"></i> Reportes Ejecutivos</h3>
-					</div>
-					<div class="panel-body">
-						<div class="actions-container">
-							<div class="list-group">
-								<a href="#" class="list-group-item" onclick="descargarReporteDirecto('../reportes/reporteTodasLasBajas.php','reporte_todas_las_bajas.pdf'); return false;">
-									<span class="glyphicon glyphicon-remove-circle"></span> Reporte de Todas las Bajas del Sistema
-									<span class="badge" style="background-color: #d9534f;">PDF</span>
-								</a>
-								<a href="#" class="list-group-item" onclick="descargarReporteDirecto('../reportes/reporteEquiposActivos.php','reporte_equipos_activos.pdf'); return false;">
-									<span class="glyphicon glyphicon-ok-circle"></span> Reporte de Equipos Activos del Sistema
-									<span class="badge" style="background-color: #5cb85c;">PDF</span>
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Acciones Rápidas</h3>
-					</div>
-					<div class="panel-body">
-						<div class="actions-container">
-							<div class="list-group">
-								<a href="equipos.php" class="list-group-item">
-									<span class="glyphicon glyphicon-cog"></span> Gestionar Equipos
-								</a>
-								<a href="solicitudAltaEquipos.php" class="list-group-item">
-									<span class="glyphicon glyphicon-file"></span> Solicitud para dar de Alta Equipos
-								</a>
-								<a href="bajas.php" class="list-group-item">
-									<span class="glyphicon glyphicon-minus"></span> Registrar Baja de Equipo
-								</a>
-								<a href="bajasMasivas.php" class="list-group-item">
-									<span class="glyphicon glyphicon-list"></span> Bajas Masivas
-								</a>
-							</div>
-						</div>
+						<text class="d-total" x="84" y="86" text-anchor="middle"><?php echo number_format($total); ?></text>
+						<text class="d-lab" x="84" y="104" text-anchor="middle">equipos</text>
+					</svg>
+					<div class="cc-leyenda">
+						<?php foreach ($segmentos as $s): ?>
+						<div class="cc-leyenda__item"><span class="cc-leyenda__sw <?php echo $s[1]; ?>"></span><span><?php echo $s[2]; ?></span><span class="cc-leyenda__val"><?php echo number_format($s[3]); ?></span><span class="cc-leyenda__pct"><?php echo ccPct($s[3], $total); ?>%</span></div>
+						<?php endforeach; ?>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<div class="cc-grid-32" style="align-items:start">
+		<div class="cc-card">
+			<div class="cc-card__head"><h2 class="cc-h2">Actividad reciente</h2></div>
+			<div class="cc-card__body">
+				<?php if ($actividad): ?>
+				<ul class="cc-actividad">
+					<?php foreach ($actividad as $act): $ic = $iconosActividad[$act['tipo']]; ?>
+					<li>
+						<span class="cc-actividad__ico <?php echo $ic[1]; ?>"><i data-i="<?php echo $ic[0]; ?>"></i></span>
+						<div class="cc-actividad__txt"><?php echo htmlspecialchars($act['titulo']); ?><?php if ($act['codigo'] !== ''): ?> <b><?php echo htmlspecialchars($act['codigo']); ?></b><?php endif; ?><?php echo $act['detalle'] !== '' ? ' · ' . htmlspecialchars($act['detalle']) : ''; ?>
+							<?php if ($act['meta'] !== ''): ?><div class="cc-actividad__meta"><?php echo htmlspecialchars($act['meta']); ?></div><?php endif; ?>
+						</div>
+						<span class="cc-actividad__hora"><?php echo htmlspecialchars(ccCuando($act['fecha'], $act['hora'], $meses)); ?></span>
+					</li>
+					<?php endforeach; ?>
+				</ul>
+				<?php else: ?>
+				<div class="cc-vacio"><b>Sin actividad todavía</b><span class="cc-muted cc-small">Aquí aparecerán las altas, resguardos y bajas.</span></div>
+				<?php endif; ?>
+			</div>
+		</div>
+		<div class="cc-card">
+			<div class="cc-card__head"><div class="cc-row" style="gap:8px"><h2 class="cc-h2">Solicitudes de alta</h2><span class="cc-contador"><?php echo number_format($totalSolicitudes); ?></span></div><a href="solicitudAltaEquipos.php">Nueva solicitud</a></div>
+			<div class="cc-card__body" style="padding-top:12px;padding-bottom:12px">
+				<?php if ($solicitudes): ?>
+					<?php foreach ($solicitudes as $s): ?>
+					<div class="cc-sol">
+						<b style="font-weight:500">Solicitud <?php echo htmlspecialchars((string)$s[0]); ?><?php echo $s[4] ? ' · ' . htmlspecialchars((string)$s[4]) : ''; ?></b>
+						<span class="cc-horas"><i data-i="reloj"></i><?php echo htmlspecialchars(ccCuando($s[3], true, $meses)); ?></span>
+						<span class="cc-muted cc-small"><?php echo (int)$s[1]; ?> equipo<?php echo (int)$s[1] === 1 ? '' : 's'; ?><?php echo $s[2] ? ' · ' . htmlspecialchars((string)$s[2]) : ''; ?></span><span></span>
+					</div>
+					<?php endforeach; ?>
+				<?php else: ?>
+				<div class="cc-vacio" style="padding:var(--esp-5)"><b>Sin solicitudes</b><span class="cc-muted cc-small">Las solicitudes de alta aparecerán aquí.</span></div>
+				<?php endif; ?>
+			</div>
+		</div>
+	</div>
+
+	<div class="cc-card">
+		<div class="cc-card__head"><div><h2 class="cc-h2">Reportes ejecutivos</h2><div class="cc-muted cc-small">PDF listos para dirección</div></div></div>
+		<div class="cc-card__body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--esp-4)">
+			<div class="cc-reporte"><span class="cc-reporte__doc"><i data-i="pdf"></i>PDF</span><div class="cc-reporte__txt"><b style="font-weight:500">Reporte de todas las bajas</b><div class="cc-muted cc-small">Equipos dados de baja con motivo, fecha y destino</div></div><button type="button" class="cc-btn cc-btn--secundario cc-btn--sm" onclick="descargarReporteDirecto(this, '../reportes/reporteTodasLasBajas.php','reporte_todas_las_bajas.pdf')"><i data-i="descarga"></i>Descargar</button></div>
+			<div class="cc-reporte"><span class="cc-reporte__doc"><i data-i="pdf"></i>PDF</span><div class="cc-reporte__txt"><b style="font-weight:500">Reporte de equipos activos</b><div class="cc-muted cc-small">Inventario activo por hotel y departamento</div></div><button type="button" class="cc-btn cc-btn--secundario cc-btn--sm" onclick="descargarReporteDirecto(this, '../reportes/reporteEquiposActivos.php','reporte_equipos_activos.pdf')"><i data-i="descarga"></i>Descargar</button></div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
-		function descargarReporteDirecto(url, nombreArchivo) {
+		document.addEventListener('DOMContentLoaded', function(){ CostaClara.tooltips(); });
+		function descargarReporteDirecto(boton, url, nombreArchivo) {
+			boton.disabled = true;
 			fetch(url, { credentials: 'same-origin' })
 				.then(function(res){
 					if (!res.ok) throw new Error('No se pudo generar el reporte');
@@ -836,15 +775,16 @@
 					a.click();
 					document.body.removeChild(a);
 					window.URL.revokeObjectURL(objectUrl);
+					alertify.success('Reporte descargado.');
 				})
 				.catch(function(){
-					if (typeof alertify !== 'undefined') {
-						alertify.error('Error al descargar el reporte.');
-					} else {
-						alert('Error al descargar el reporte.');
-					}
-				});
+					alertify.error('No se pudo generar el reporte. Intenta de nuevo.');
+				})
+				.then(function(){ boton.disabled = false; });
 		}
 	</script>
+		</main>
+	</div>
+</div>
 </body>
 </html>

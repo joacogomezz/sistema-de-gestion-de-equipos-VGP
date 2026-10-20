@@ -1,4 +1,5 @@
 <?php
+define('PDF_OUTPUT', true);
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -275,5 +276,5 @@ require_once __DIR__ . "/../librerias/dompdf/autoload.inc.php";
 	$nombreArchivo = 'Formato_Baja_Masiva_' . $id_baja_masiva . '_' . date('Y-m-d', strtotime($baja['fecha_baja'])) . '.pdf';
 
 	// Descargar el PDF
-	$dompdf->stream($nombreArchivo, array("Attachment" => true));
+	$dompdf->stream($nombreArchivo, array("Attachment" => empty($_GET['ver'])));
 ?>
