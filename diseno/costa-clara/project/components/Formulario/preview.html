@@ -1,0 +1,26 @@
+<!-- @dsCard group="Formularios" height=470 width=1000 subtitle="Tarjeta con secciones y validación en línea" -->
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Formulario</title>
+<style></style></head>
+<body>
+<div class="cc-pad"><div class="cc-card">
+<div class="cc-form-seccion"><div><h3 class="cc-h3">Datos del equipo</h3><p class="cc-muted cc-small" style="margin:4px 0 0">Los campos con <span style="color:var(--peligro)">*</span> son obligatorios.</p></div>
+<div class="cc-form-grid">
+<div class="cc-field"><label class="cc-label">Tipo de equipo<span class="cc-req">*</span></label><select class="cc-select"><option>Computadora</option></select></div>
+<div class="cc-field"><label class="cc-label">Marca y modelo<span class="cc-req">*</span></label><input class="cc-input cc-input--ok" value="Lenovo ThinkCentre M70q"></div>
+<div class="cc-field"><label class="cc-label">Número de serie<span class="cc-req">*</span></label><input class="cc-input cc-input--error" value="MJ0F4K2"><span class="cc-error"><i data-i="error"></i>Este número de serie ya está registrado (VDP-CMP-00412).</span></div>
+<div class="cc-field"><label class="cc-label">Código interno</label><input class="cc-input" value="VDP-CMP-00871" disabled style="background:var(--superficie-hundida);color:var(--texto-secundario)"><span class="cc-ayuda">Se genera automáticamente por hotel y tipo.</span></div>
+</div></div>
+<div class="cc-form-seccion"><div><h3 class="cc-h3">Ubicación</h3><p class="cc-muted cc-small" style="margin:4px 0 0">Dónde estará el equipo.</p></div>
+<div class="cc-form-grid">
+<div class="cc-field"><label class="cc-label">Hotel<span class="cc-req">*</span></label><select class="cc-select"><option>Villa del Palmar</option></select></div>
+<div class="cc-field"><label class="cc-label">Departamento<span class="cc-req">*</span></label><select class="cc-select"><option>Sistemas</option></select></div>
+<div class="cc-field"><label class="cc-label">Área</label><input class="cc-input" placeholder="Ej. Site de comunicaciones"></div>
+<div class="cc-field"><label class="cc-label">Fase</label><select class="cc-select"><option>Fase 2</option></select></div>
+</div></div>
+<div class="cc-form-pie"><button class="cc-btn cc-btn--fantasma">Cancelar</button><button class="cc-btn cc-btn--secundario">Guardar y registrar otro</button><button class="cc-btn cc-btn--primario">Guardar equipo</button></div>
+</div></div>
+<script>CostaClara.hidratar();CostaClara.tooltips();</script>
+</body>
+</html>

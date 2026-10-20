@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba PWA — Villa Group</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body { font-family: Segoe UI, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { color: #c29a4b; }
+    .ok { color: #2d5a27; }
+    .err { color: #8b0000; }
+    pre { background: #1a1a1a; color: #eee; padding: 1rem; overflow: auto; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Prueba rápida PWA</h1>
+  <p>Abre con <strong>HTTPS</strong> o <code>http://localhost</code>. Revisa la consola (F12) para detalles.</p>
+  <ul id="lista"></ul>
+  <pre id="log"></pre>
+  <script>
+    const log = (msg) => { document.getElementById('log').textContent += msg + '\n'; };
+    const li = (html, ok) => {
+      const u = document.createElement('li');
+      u.className = ok ? 'ok' : 'err';
+      u.innerHTML = html;
+      document.getElementById('lista').appendChild(u);
+    };
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function (reg) {
+        li('Service Worker registrado: ' + reg.scope, true);
+        log('SW active: ' + (reg.active ? reg.active.scriptURL : '(pendiente)'));
+      }).catch(function (e) {
+        li('Error al registrar Service Worker: ' + e.message, false);
+        log(String(e));
+      });
+    } else {
+      li('Este navegador no soporta Service Workers.', false);
+    }
+    fetch('manifest.json').then(function (r) {
+      if (r.ok) {
+        li('manifest.json accesible (HTTP ' + r.status + ')', true);
+        return r.json();
+      }
+      li('manifest.json no accesible', false);
+      throw new Error('manifest');
+    }).then(function (j) {
+      log('Nombre en manifest: ' + (j.name || '(sin nombre)'));
+    }).catch(function (e) { log(String(e)); });
+  </script>
+</body>
+</html>

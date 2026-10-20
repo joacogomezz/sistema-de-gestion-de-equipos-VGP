@@ -1,0 +1,843 @@
+html,body {
+    height:100%;
+    padding-top:70px;
+}
+
+
+section {
+  height:calc(90% - 50px);
+}
+
+.affix {
+  padding:0px;
+  -webkit-transition:padding 0.2s linear;
+  -moz-transition:padding 0.2s linear;  
+  -o-transition:padding 0.2s linear;         
+  transition:padding 0.2s linear;  
+
+}
+
+.affix-top {
+  padding-top:15px;
+  padding-bottom:15px;
+  -webkit-transition:padding 0.5s linear;
+  -moz-transition:padding 0.5s linear;  
+  -o-transition:padding 0.5s linear;         
+  transition:padding 0.5s linear;  
+}
+
+/* ===== ESTILOS PARA NAVBAR-INVERSE ===== */
+.navbar-inverse {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%) !important;
+    border: none !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important;
+    min-height: 64px !important;
+}
+
+.navbar-inverse > .container {
+    min-height: 64px !important;
+    width: 98% !important;
+    max-width: none !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+}
+
+/* Logo e ítems en UNA sola línea, alineados verticalmente */
+.navbar-inverse .container {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+}
+
+.navbar-inverse .navbar-header {
+    flex: 0 0 auto !important;
+}
+
+
+.navbar-inverse .navbar-brand {
+    color: #c29a4b !important;
+    font-weight: bold !important;
+    font-size: 24px !important;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #ffffff !important;
+    transition: all 0.3s ease !important;
+    padding: 16px 18px !important;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover {
+    color: #ffffff !important;
+    background-color: #2a2a2a !important;
+}
+
+.navbar-inverse .navbar-nav > .active > a {
+    background-color: #c29a4b !important;
+    color: #ffffff !important;
+}
+
+.navbar-inverse .navbar-toggle {
+    border-color: #c29a4b !important;
+}
+
+.navbar-inverse .navbar-toggle .icon-bar {
+    background-color: #c29a4b !important;
+}
+
+.navbar-inverse .dropdown-menu {
+    background: #2a2a2a !important;
+    border: 2px solid #333333 !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+}
+
+.navbar-inverse .dropdown-menu > li > a {
+    color: #ffffff !important;
+    transition: all 0.3s ease !important;
+}
+
+.navbar-inverse .dropdown-menu > li > a:hover {
+    background-color: #c29a4b !important;
+    color: #ffffff !important;
+}
+
+/* ===== ESTILOS DEL LOGO Y SEPARACIÓN DE LA BARRA ===== */
+.navbar-inverse .navbar-header {
+    flex: 0 0 auto !important;
+    margin-right: 28px;
+    border-right: 1px solid rgba(194, 154, 75, 0.35);
+    padding-right: 20px;
+    display: flex !important;
+    align-items: center !important;
+    float: none !important;
+}
+
+.navbar-inverse .navbar-brand.logo-link {
+    padding: 0 12px 0 0 !important;
+    margin-right: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    background: transparent !important;
+    height: auto !important;
+    line-height: 1 !important;
+}
+
+/* Colapsado del menú: logo e ítems en la misma línea */
+.navbar-inverse .collapse.navbar-collapse {
+    float: none !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+}
+
+.navbar-inverse .collapse.navbar-collapse > .navbar-right {
+    margin-left: auto !important;
+}
+
+/* Mejor distribución general de opciones en la barra */
+.navbar-inverse .navbar-right {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    column-gap: 16px !important;
+    row-gap: 0 !important;
+    margin-right: 0 !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+.navbar-inverse .navbar-right > li {
+    float: none !important;
+    margin: 0 !important;
+}
+
+/* Separar bloque de navegación principal del usuario */
+.navbar-inverse .navbar-right > li:last-child {
+    margin-left: 18px !important;
+    padding-left: 18px !important;
+    border-left: 1px solid rgba(194, 154, 75, 0.35);
+}
+
+/* Logo como primer ítem del menú: misma línea que Inicio, Administrar, etc. */
+.navbar-inverse .nav-logo-row {
+    display: flex !important;
+    align-items: center !important;
+    margin-right: 20px;
+    padding-right: 20px;
+    border-right: 1px solid rgba(194, 154, 75, 0.35);
+}
+
+.navbar-inverse .logo-nav-item {
+    float: none !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.navbar-inverse .logo-nav-item .logo-link {
+    padding: 5px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 100%;
+}
+
+.navbar-inverse .logo-nav-item .logo-link:hover {
+    background: transparent !important;
+}
+
+/* Control explícito de logo por viewport para evitar doble logo */
+.navbar-inverse .navbar-brand.logo-link.logo-mobile {
+    display: none !important;
+}
+
+.navbar-inverse .logo-nav-item .logo-link.logo-desktop {
+    display: flex !important;
+}
+
+/* En móvil ocultar el logo duplicado del menú (se ve el del header) */
+@media (max-width: 767px) {
+    /* Permitir que Bootstrap controle abrir/cerrar del menú */
+    .navbar-inverse .collapse.navbar-collapse {
+        display: none !important;
+        flex: 0 0 auto !important;
+        align-items: stretch !important;
+        flex-wrap: wrap !important;
+    }
+
+    .navbar-inverse .collapse.navbar-collapse.in {
+        display: block !important;
+    }
+
+    .navbar-inverse .container {
+        display: block !important;
+    }
+
+    .navbar-inverse .navbar-header {
+        margin-right: 0;
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .navbar-inverse .navbar-right {
+        display: block !important;
+        margin-left: 0 !important;
+    }
+
+    .navbar-inverse .navbar-right > li:last-child {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        border-left: none !important;
+    }
+
+    .navbar-inverse .nav-logo-row {
+        display: none !important;
+    }
+
+    .navbar-inverse .navbar-brand.logo-link.logo-mobile {
+        display: flex !important;
+    }
+
+    .navbar-inverse .logo-nav-item .logo-link.logo-desktop {
+        display: none !important;
+    }
+}
+
+/* Contenedor del logo: fondo oscuro para que no se vea recuadro blanco */
+.navbar-inverse .navbar-brand .logo-wrap,
+.navbar-inverse .logo-nav-item .logo-wrap {
+    display: inline-block !important;
+    background-color: #1a1a1a !important;
+    border-radius: 8px !important;
+    padding: 4px !important;
+    border: 1px solid rgba(194, 154, 75, 0.45) !important;
+    line-height: 0 !important;
+}
+
+.navbar-inverse .navbar-brand .logo,
+.navbar-inverse .navbar-brand img.logo,
+.navbar-inverse .logo-nav-item .logo,
+.navbar-inverse .logo-nav-item img.logo {
+    width: 38px !important;
+    height: 38px !important;
+    max-width: 38px !important;
+    max-height: 38px !important;
+    object-fit: contain !important;
+    display: block !important;
+    border-radius: 6px !important;
+    vertical-align: middle !important;
+}
+
+.logo {
+    transition: none !important;
+    transform: none !important;
+}
+
+/* ===== TEMA VILLA GROUP ===== */
+/* Paleta de colores basada en la página oficial de Villa Group */
+
+:root {
+    /* Colores principales */
+    --villa-dark: #1a1a1a;
+    --villa-darker: #0f0f0f;
+    --villa-light: #2a2a2a;
+    --villa-white: #ffffff;
+    --villa-gold: #c29a4b;
+    --villa-gold-hover: #d4a85c;
+    --villa-orange: #a0522d;
+    --villa-orange-hover: #b05a35;
+    --villa-text: #ffffff;
+    --villa-text-muted: #cccccc;
+    --villa-border: #333333;
+    --villa-success: #28a745;
+    --villa-danger: #dc3545;
+    --villa-warning: #ffc107;
+    --villa-info: #17a2b8;
+}
+
+/* ===== ESTILOS GENERALES ===== */
+html, body {
+    height: 100%;
+    padding-top: 70px;
+    background-color: var(--villa-dark);
+    color: var(--villa-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== NAVEGACIÓN Y MENÚ ===== */
+.navbar-default {
+    background: linear-gradient(135deg, var(--villa-dark) 0%, var(--villa-darker) 100%);
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.navbar-default .navbar-brand {
+    color: var(--villa-gold) !important;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: var(--villa-text) !important;
+    transition: all 0.3s ease;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: var(--villa-gold) !important;
+    background-color: var(--villa-light) !important;
+}
+
+.navbar-default .navbar-nav > .active > a {
+    background-color: var(--villa-gold) !important;
+    color: var(--villa-white) !important;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: var(--villa-gold);
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: var(--villa-gold);
+}
+
+/* ===== BOTONES ===== */
+.btn-primary {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    border: none;
+    color: var(--villa-white);
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--villa-gold-hover) 0%, var(--villa-orange-hover) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(194, 154, 75, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--villa-success) 0%, #20c997 100%);
+    border: none;
+    color: var(--villa-white);
+    font-weight: bold;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--villa-danger) 0%, #c82333 100%);
+    border: none;
+    color: var(--villa-white);
+    font-weight: bold;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--villa-warning) 0%, #e0a800 100%);
+    border: none;
+    color: var(--villa-white);
+    font-weight: bold;
+}
+
+/* ===== TABLAS ===== */
+.table {
+    background-color: var(--villa-light);
+    color: var(--villa-text);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    color: var(--villa-white);
+    border: none;
+    font-weight: bold;
+}
+
+.table tbody tr {
+    background-color: var(--villa-light);
+    transition: background-color 0.3s ease;
+}
+
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: var(--villa-dark);
+}
+
+/* ===== DESACTIVAR HOVER DE TABLAS ===== */
+.table-hover > tbody > tr:hover,
+.table tbody tr:hover,
+.table-striped > tbody > tr:hover,
+.table-striped > tbody > tr:nth-of-type(odd):hover,
+.table-striped > tbody > tr:nth-of-type(even):hover,
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th,
+.table tbody tr:hover > td,
+.table tbody tr:hover > th {
+    background-color: inherit !important;
+    color: inherit !important;
+}
+
+/* ===== FORZAR ESTILOS SIN HOVER ===== */
+.table-hover > tbody > tr,
+.table tbody tr,
+.table-striped > tbody > tr,
+.table-striped > tbody > tr:nth-of-type(odd),
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: var(--villa-light) !important;
+    color: var(--villa-text) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: var(--villa-dark) !important;
+    color: var(--villa-text) !important;
+}
+
+/* ===== SOBRESCRIBIR BOOTSTRAP HOVER COMPLETAMENTE ===== */
+.table-hover > tbody > tr:hover,
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th,
+.table-hover > tbody > tr:hover > td.active,
+.table-hover > tbody > tr:hover > th.active,
+.table-hover > tbody > tr.active:hover > td,
+.table-hover > tbody > tr:hover > .active,
+.table-hover > tbody > tr.active:hover > th {
+    background-color: var(--villa-light) !important;
+    color: var(--villa-text) !important;
+}
+
+.table-striped.table-hover > tbody > tr:nth-of-type(odd):hover,
+.table-striped.table-hover > tbody > tr:nth-of-type(odd):hover > td,
+.table-striped.table-hover > tbody > tr:nth-of-type(odd):hover > th {
+    background-color: var(--villa-dark) !important;
+    color: var(--villa-text) !important;
+}
+
+
+/* ===== FORMULARIOS ===== */
+.form-control, input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="url"], textarea, select {
+    background-color: var(--villa-light) !important;
+    border: 2px solid var(--villa-border) !important;
+    color: var(--villa-text) !important;
+    border-radius: 8px !important;
+}
+
+.form-control:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="tel"]:focus, input[type="url"]:focus, textarea:focus, select:focus {
+    background-color: var(--villa-light) !important;
+    border-color: var(--villa-gold) !important;
+    color: var(--villa-text) !important;
+    box-shadow: 0 0 0 0.2rem rgba(194, 154, 75, 0.25) !important;
+}
+
+.form-control::placeholder, input::placeholder, textarea::placeholder {
+    color: var(--villa-text-muted) !important;
+}
+
+/* ===== PANELES Y TARJETAS ===== */
+.panel {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.panel-heading {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    color: var(--villa-white);
+    border: none;
+    border-radius: 8px 8px 0 0;
+    font-weight: bold;
+}
+
+.panel-body {
+    background-color: var(--villa-light);
+    color: var(--villa-text);
+}
+
+/* ===== ALERTAS ===== */
+.alert {
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, var(--villa-success) 0%, #20c997 100%);
+    color: var(--villa-white);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, var(--villa-danger) 0%, #c82333 100%);
+    color: var(--villa-white);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, var(--villa-warning) 0%, #e0a800 100%);
+    color: var(--villa-white);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, var(--villa-info) 0%, #138496 100%);
+    color: var(--villa-white);
+}
+
+/* ===== LABELS ===== */
+.label {
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-weight: bold;
+}
+
+.label-success {
+    background-color: var(--villa-success);
+}
+
+.label-danger {
+    background-color: var(--villa-danger);
+}
+
+.label-warning {
+    background-color: var(--villa-warning);
+    color: var(--villa-white);
+}
+
+.label-info {
+    background-color: var(--villa-info);
+}
+
+/* ===== PAGINACIÓN ===== */
+.pagination > li > a {
+    background-color: var(--villa-light);
+    border-color: var(--villa-border);
+    color: var(--villa-text);
+}
+
+.pagination > li > a:hover {
+    background-color: var(--villa-gold);
+    border-color: var(--villa-gold);
+    color: var(--villa-white);
+}
+
+.pagination > .active > a {
+    background-color: var(--villa-gold);
+    border-color: var(--villa-gold);
+    color: var(--villa-white);
+}
+
+/* ===== MODALES ===== */
+.modal-content {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    border-radius: 10px;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    color: var(--villa-white);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-title {
+    color: var(--villa-white);
+    font-weight: bold;
+}
+
+.modal-body {
+    background-color: var(--villa-light);
+    color: var(--villa-text);
+}
+
+.modal-footer {
+    background-color: var(--villa-dark);
+    border-top: 2px solid var(--villa-border);
+}
+
+/* ===== DROPDOWN ===== */
+.dropdown-menu {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    border-radius: 8px;
+}
+
+.dropdown-menu > li > a {
+    color: var(--villa-text);
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu > li > a:hover {
+    background-color: var(--villa-gold);
+    color: var(--villa-white);
+}
+
+/* ===== NAVEGACIÓN POR PESTAÑAS ===== */
+.nav-tabs {
+    border-bottom: 2px solid var(--villa-border);
+}
+
+.nav-tabs > li > a {
+    background-color: var(--villa-dark);
+    color: var(--villa-text);
+    border: 2px solid var(--villa-border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+}
+
+.nav-tabs > li > a:hover {
+    background-color: var(--villa-light);
+    border-color: var(--villa-gold);
+    color: var(--villa-white);
+}
+
+.nav-tabs > li.active > a {
+    background-color: var(--villa-gold);
+    border-color: var(--villa-gold);
+    color: var(--villa-white);
+    font-weight: bold;
+}
+
+/* ===== PROGRESS BARS ===== */
+.progress {
+    background-color: var(--villa-dark);
+    border-radius: 10px;
+    height: 20px;
+}
+
+.progress-bar {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    border-radius: 10px;
+}
+
+/* ===== WELLS ===== */
+.well {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    border-radius: 8px;
+    color: var(--villa-text);
+}
+
+/* ===== LIST GROUPS ===== */
+.list-group-item {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    color: var(--villa-text);
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: var(--villa-border);
+    border-color: var(--villa-gold);
+}
+
+.list-group-item.active {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    border-color: var(--villa-gold);
+    color: var(--villa-white);
+    font-weight: bold;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    background-color: var(--villa-gold);
+    color: var(--villa-white);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+/* ===== TOOLTIPS ===== */
+.tooltip-inner {
+    background-color: var(--villa-gold);
+    color: var(--villa-white);
+    border-radius: 8px;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: var(--villa-gold);
+}
+
+/* ===== POPOVERS ===== */
+.popover {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    border-radius: 8px;
+}
+
+.popover-title {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    color: var(--villa-white);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+}
+
+.popover-content {
+    background-color: var(--villa-light);
+    color: var(--villa-text);
+}
+
+/* ===== SCROLLBARS PERSONALIZADOS ===== */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--villa-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--villa-gold-hover) 0%, var(--villa-orange-hover) 100%);
+}
+
+/* ===== ENLACES ===== */
+a {
+    color: var(--villa-gold);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--villa-gold-hover);
+    text-decoration: none;
+}
+
+/* ===== SELECT2 PERSONALIZADO ===== */
+.select2-container--default .select2-selection--single {
+    background-color: var(--villa-light);
+    border: 2px solid var(--villa-border);
+    border-radius: 8px;
+    color: var(--villa-text);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--villa-text);
+}
+
+.select2-container--default .select2-results__option {
+    background-color: var(--villa-light);
+    color: var(--villa-text);
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--villa-gold);
+    color: var(--villa-white);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .navbar-default .navbar-brand {
+        font-size: 20px;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== ESTILOS ESPECÍFICOS PARA REPORTES ===== */
+.stats-card {
+    background: linear-gradient(135deg, var(--villa-gold) 0%, var(--villa-orange) 100%);
+    color: var(--villa-white);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.section-card {
+    background-color: var(--villa-light);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    border-left: 4px solid var(--villa-gold);
+}
+
+.header-report {
+    background: linear-gradient(135deg, var(--villa-dark) 0%, var(--villa-darker) 100%);
+    color: var(--villa-text);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+    border: 2px solid var(--villa-gold);
+}
+
+/* ===== SOLUCIÓN FINAL PARA HOVER DE TABLAS ===== */
+/* Máxima especificidad para sobrescribir Bootstrap */
+html body .table-hover > tbody > tr:hover,
+html body .table-hover > tbody > tr:hover > td,
+html body .table-hover > tbody > tr:hover > th,
+html body .table-hover > tbody > tr:hover > td.active,
+html body .table-hover > tbody > tr:hover > th.active,
+html body .table-hover > tbody > tr.active:hover > td,
+html body .table-hover > tbody > tr:hover > .active,
+html body .table-hover > tbody > tr.active:hover > th,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(odd):hover,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(odd):hover > td,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(odd):hover > th,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(even):hover,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(even):hover > td,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(even):hover > th {
+    background-color: var(--villa-light) !important;
+    color: var(--villa-text) !important;
+}
+
+html body .table-striped.table-hover > tbody > tr:nth-of-type(odd):hover,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(odd):hover > td,
+html body .table-striped.table-hover > tbody > tr:nth-of-type(odd):hover > th {
+    background-color: var(--villa-dark) !important;
+    color: var(--villa-text) !important;
+}

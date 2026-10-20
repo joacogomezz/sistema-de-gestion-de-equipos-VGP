@@ -1,0 +1,56 @@
+{
+    "name": "Sistema de Gesti\u00f3n de Equipos - Villa Group",
+    "short_name": "Villa Equipos",
+    "description": "Sistema de gesti\u00f3n de equipos del hotel Villa Group",
+    "start_url": "index.php",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#1a1a1a",
+    "theme_color": "#c29a4b",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "img/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "img/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "categories": [
+        "business",
+        "productivity"
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Ver Equipos",
+            "short_name": "Equipos",
+            "description": "Ver lista de equipos",
+            "url": "./vistas/equipos.php",
+            "icons": [
+                {
+                    "src": "img/icon-192x192.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Registrar Baja",
+            "short_name": "Bajas",
+            "description": "Registrar baja de equipo",
+            "url": "./vistas/bajas.php",
+            "icons": [
+                {
+                    "src": "img/icon-192x192.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+# Datos y secretos del servidor: nunca se suben
+config.php
+archivos/*
+!archivos/LEEME.md
+servidor/logs/
+*.log
+.claude/
+ngrok.exe
+# Respaldos de base de datos (contienen datos reales)
+*_respaldo_*.sql
+RESPALDO_*/
