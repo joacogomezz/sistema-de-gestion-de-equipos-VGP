@@ -183,4 +183,4 @@ $dompdf->render();
 
 $nombreArchivo = 'Resguardo_multiple_' . $esc($primero['numero_factura']) . '_' . date('Y-m-d') . '.pdf';
 ob_end_clean();
-$dompdf->stream($nombreArchivo, array("Attachment" => true));
+$dompdf->stream($nombreArchivo, array("Attachment" => empty($_GET['ver'])));

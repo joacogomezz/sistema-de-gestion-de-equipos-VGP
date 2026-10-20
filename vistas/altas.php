@@ -14,66 +14,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Gestión de Altas - Hotel Villa Group</title>
-	<style>
-		:root {
-			--villa-dark: #1a1a1a;
-			--villa-darker: #0f0f0f;
-			--villa-light: #2a2a2a;
-			--villa-white: #ffffff;
-			--villa-gold: #c29a4b;
-			--villa-gold-hover: #d4a85c;
-			--villa-orange: #a0522d;
-			--villa-orange-hover: #b05a35;
-			--villa-text: #ffffff;
-			--villa-text-muted: #cccccc;
-			--villa-border: #333333;
-		}
-
-		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background: linear-gradient(135deg, var(--villa-dark) 0%, var(--villa-darker) 100%);
-			min-height: 100vh;
-			color: var(--villa-text);
-		}
-
-		.jumbotron {
-			background: var(--villa-light) !important;
-			border: 2px solid var(--villa-border) !important;
-			border-radius: 15px !important;
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-		}
-
-		.jumbotron h1, .jumbotron h2, .jumbotron p {
-			color: var(--villa-gold) !important;
-		}
-
-		.panel {
-			background: var(--villa-light) !important;
-			border: 2px solid var(--villa-border) !important;
-			border-radius: 10px !important;
-			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
-		}
-
-		.panel-heading {
-			background: var(--villa-gold) !important;
-			border-color: var(--villa-border) !important;
-			color: var(--villa-white) !important;
-			border-radius: 8px 8px 0 0 !important;
-		}
-
-		.panel-body {
-			background: var(--villa-light) !important;
-			color: var(--villa-text) !important;
-		}
-
-		.btn {
-			margin-right: 10px;
-			margin-bottom: 10px;
-		}
-	</style>
-	<link rel="stylesheet" href="../librerias/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="../css/menu.css">
-	<link rel="stylesheet" href="../css/villa-group-theme.css">
 </head>
 <body>
 	<?php require_once "menu.php"; ?>

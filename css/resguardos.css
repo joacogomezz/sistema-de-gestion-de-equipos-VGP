@@ -1,0 +1,66 @@
+/* Costa Clara — Resguardos. Usa la base de css/equipos.css (filtros, tabla, popovers, modales y toasts). */
+.est-firma{display:flex;gap:4px;padding:3px;border:1px solid var(--borde-fuerte);border-radius:var(--radio-md);background:var(--superficie-hundida)}
+.est-firma button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:0;border-radius:7px;background:transparent;color:var(--texto-secundario);font:500 13px/1 var(--font-sans);cursor:pointer;white-space:nowrap}
+.est-firma button b{font-weight:600;font-variant-numeric:tabular-nums}
+.est-firma button[aria-pressed="true"]{background:var(--superficie);color:var(--texto);box-shadow:var(--sombra-1)}
+.est-firma .dot{width:7px;height:7px;border-radius:50%}
+.tipo{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:var(--radio-pill);font:500 12px/1 var(--font-sans);white-space:nowrap}
+.tipo--ind{background:var(--superficie-hundida);color:var(--texto-secundario)}
+.tipo--mul{background:var(--mar-suave);color:var(--mar)}
+.tipo .cc-ico{width:13px;height:13px}
+.exp{width:24px;height:24px;border:0;border-radius:var(--radio-sm);background:transparent;color:var(--texto-secundario);display:inline-grid;place-items:center;cursor:pointer;vertical-align:middle;margin-right:2px;transition:transform .15s;padding:0}
+.exp:hover{background:var(--superficie-hundida);color:var(--texto)}
+.exp .cc-ico{width:14px;height:14px}
+.exp[aria-expanded="true"]{transform:rotate(90deg)}
+.exp-vacio{display:inline-block;width:26px}
+.mas{display:inline-flex;align-items:center;height:20px;padding:0 6px;margin-left:6px;border-radius:var(--radio-pill);background:var(--superficie-hundida);color:var(--texto-secundario);font:600 11px/1 var(--font-sans)}
+.firma{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px 0 8px;border-radius:var(--radio-pill);font:500 12px/1 var(--font-sans);white-space:nowrap}
+.firma .cc-ico{width:13px;height:13px}
+.firma--ok{background:var(--exito-suave);color:var(--exito-texto)}
+.firma--pend{background:var(--alerta-suave);color:var(--alerta-texto)}
+.firma-sub{display:block;font-size:11px;line-height:14px;color:var(--texto-secundario);margin-top:2px}
+.firma-sub.tarde{color:var(--peligro-texto)}
+.cc-t td.c-firma{height:auto;padding-top:7px;padding-bottom:7px}
+.accs{display:inline-flex;gap:2px}
+.cc-t tr.sub td{background:var(--fondo);height:34px;font-size:12px;color:var(--texto-secundario);cursor:default}
+.cc-t tr.sub td b{color:var(--texto);font-weight:500}
+.cc-t tr.sub:hover td{background:var(--fondo)}
+.cc-t .c-folio b{font-weight:600;font-variant-numeric:tabular-nums}
+.cc-t .c-tipo{left:0;width:210px;min-width:210px;max-width:210px}
+.cc-t .c-folio{left:210px;border-right:1px solid var(--borde)}
+.cc-t td.c-area,.cc-t td.c-resp,.cc-t td.c-modelo,.cc-t td.c-tequipo{max-width:220px;overflow:hidden;text-overflow:ellipsis}
+
+/* Visor del documento */
+.mod-grande{width:min(900px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.mod-head{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+.mod-head h2{margin:0;font:600 17px/24px var(--font-sans);flex:1;min-width:0;color:var(--texto)}
+.mod-cuerpo{overflow:auto;padding:16px;background:var(--superficie-hundida);flex:1;min-height:0}
+.mod-cuerpo iframe{display:block;width:100%;height:min(68vh,760px);border:0;border-radius:4px;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.mod-pie{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 20px;border-top:1px solid var(--borde);flex-wrap:wrap}
+.pestanas{display:flex;gap:4px;padding:3px;border:1px solid var(--borde-fuerte);border-radius:var(--radio-md);background:var(--superficie-hundida)}
+.pestanas button{height:28px;padding:0 10px;border:0;border-radius:7px;background:transparent;color:var(--texto-secundario);font:500 13px/1 var(--font-sans);cursor:pointer}
+.pestanas button[aria-pressed="true"]{background:var(--superficie);color:var(--texto);box-shadow:var(--sombra-1)}
+
+/* Formularios en modal */
+.mform{padding:20px;display:flex;flex-direction:column;gap:14px;overflow:auto;color:var(--texto)}
+.mform .cc-input,.mform .cc-select{height:40px}
+.mform label{font-weight:inherit!important;margin:0}
+.eqlist{border:1px solid var(--borde);border-radius:var(--radio-md);max-height:260px;overflow:auto}
+.eqi{display:grid;grid-template-columns:auto 32px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--borde);cursor:pointer;font-size:13px}
+.eqi:last-child{border-bottom:0}
+.eqi:hover{background:var(--superficie-hundida)}
+.eqi.on{background:var(--dorado-suave)}
+.eqi b{font-weight:600;font-variant-numeric:tabular-nums}
+.eqi small{display:block;color:var(--texto-secundario);font-size:12px;line-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eqi .ya{font-size:11px;color:var(--alerta-texto);white-space:nowrap}
+.selchips{display:flex;flex-wrap:wrap;gap:6px}
+.selchip{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 4px 0 10px;border-radius:var(--radio-pill);background:var(--dorado-suave);color:var(--dorado-texto);font:500 12px/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.selchip button{width:20px;height:20px;border:0;border-radius:50%;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;padding:0}
+.selchip .cc-ico{width:11px;height:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:760px){
+  .g2{grid-template-columns:1fr}
+  .mod-cuerpo{padding:8px}
+  .est-firma{flex:none}
+  .cc-t .c-tipo{position:static}
+}

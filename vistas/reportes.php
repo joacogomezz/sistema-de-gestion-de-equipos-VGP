@@ -1,126 +1,28 @@
-<?php 
-	// Incluir archivo de seguridad
+<?php
 	require_once "../seguridad.php";
-	
-	// Requerir autenticación
 	requerirAutenticacion();
+	require_once "../clases/Conexion.php";
+	$ver = function ($ruta) { return (int)(@filemtime(__DIR__ . '/../' . $ruta) ?: time()); };
+	$esSuper = isset($_SESSION['iduser']) && (int)$_SESSION['iduser'] === 1;
+	$idHotel = $esSuper ? 0 : (int)($_SESSION['id_hotel'] ?? 0);
+	$cx = (new conectar())->conexion();
+	mysqli_set_charset($cx, 'utf8mb4');
+	$hoteles = array(); $deptos = array();
+	$r = mysqli_query($cx, "SELECT id_hotel, nombre FROM hoteles" . ($idHotel ? " WHERE id_hotel = $idHotel" : '') . " ORDER BY nombre");
+	while ($r && ($f = mysqli_fetch_assoc($r))) $hoteles[] = array('id' => (int)$f['id_hotel'], 'nombre' => $f['nombre']);
+	$r = mysqli_query($cx, "SELECT id_departamento, nombre, id_hotel FROM departamentos" . ($idHotel ? " WHERE id_hotel = $idHotel" : '') . " ORDER BY nombre");
+	while ($r && ($f = mysqli_fetch_assoc($r))) $deptos[] = array('id' => (int)$f['id_departamento'], 'nombre' => $f['nombre'], 'idHotel' => (int)$f['id_hotel']);
+	$titulo_pagina = 'Reportes · The Villa Group';
+	$estilos_extra = '<link rel="stylesheet" href="../css/equipos.css?v=' . $ver('css/equipos.css') . '"><link rel="stylesheet" href="../css/operacion.css?v=' . $ver('css/operacion.css') . '">';
+	require_once "menu.php";
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Reportes del Sistema</title>
-	<?php require_once "menu.php"; ?>
-</head>
-<body>
-
-	<div class="container">
-		 <h1>Reportes del Sistema de Gestión de Equipos</h1>
-		 <div class="row">
-		 	<div class="col-sm-12">
-		 		<div class="panel panel-primary">
-		 			<div class="panel-heading">
-		 				<h3 class="panel-title">Reportes Disponibles</h3>
-		 			</div>
-		 			<div class="panel-body">
-		 				<div class="row">
-		 					<div class="col-sm-4">
-		 						<div class="panel panel-info">
-		 							<div class="panel-heading">
-		 								<h4 class="panel-title">Reporte de Equipos</h4>
-		 							</div>
-		 							<div class="panel-body">
-		 								<p>Genera un reporte completo de todos los equipos registrados en el sistema.</p>
-		 								<a href="reportes/reporteEquipos.php" class="btn btn-info btn-block" target="_blank">
-		 									<span class="glyphicon glyphicon-list"></span> Generar Reporte
-		 								</a>
-		 							</div>
-		 						</div>
-		 					</div>
-		 					<div class="col-sm-4">
-		 						<div class="panel panel-success">
-		 							<div class="panel-heading">
-		 								<h4 class="panel-title">Reporte de Altas</h4>
-		 							</div>
-		 							<div class="panel-body">
-		 								<p>Reporte detallado de todas las altas de equipos registradas.</p>
-		 								<a href="reportes/reporteAltas.php" class="btn btn-success btn-block" target="_blank">
-		 									<span class="glyphicon glyphicon-plus"></span> Generar Reporte
-		 								</a>
-		 							</div>
-		 						</div>
-		 					</div>
-		 										<div class="col-sm-4">
-						<div class="panel panel-warning">
-							<div class="panel-heading">
-								<h4 class="panel-title">Reporte de Bajas Individuales</h4>
-							</div>
-							<div class="panel-body">
-								<p>Reporte de todas las bajas individuales de equipos.</p>
-								<a href="reportes/reporteBajasIndividuales.php" class="btn btn-warning btn-block" target="_blank">
-									<span class="glyphicon glyphicon-minus"></span> Generar Reporte
-								</a>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="panel panel-info">
-							<div class="panel-heading">
-								<h4 class="panel-title">Informe Técnico Individual</h4>
-							</div>
-							<div class="panel-body">
-								<p>Informe técnico de baja individual de equipos.</p>
-								<p><small>Nota: Este informe se genera desde la tabla de bajas individuales</small></p>
-							</div>
-						</div>
-					</div>
-		 				</div>
-		 				<div class="row">
-		 										<div class="col-sm-4">
-						<div class="panel panel-danger">
-							<div class="panel-heading">
-								<h4 class="panel-title">Reporte de Bajas Masivas</h4>
-							</div>
-							<div class="panel-body">
-								<p>Reporte de todas las bajas masivas de equipos registradas.</p>
-								<a href="reportes/reporteBajasMasivas.php" class="btn btn-danger btn-block" target="_blank">
-									<span class="glyphicon glyphicon-remove"></span> Generar Reporte
-								</a>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="panel panel-info">
-							<div class="panel-heading">
-								<h4 class="panel-title">Informe Técnico Masivo</h4>
-							</div>
-							<div class="panel-body">
-								<p>Informe técnico de baja masiva de equipos.</p>
-								<p><small>Nota: Este informe se genera desde la tabla de bajas masivas</small></p>
-							</div>
-						</div>
-					</div>
-		 					<div class="col-sm-4">
-		 						<div class="panel panel-default">
-		 							<div class="panel-heading">
-		 								<h4 class="panel-title">Reporte por Departamento</h4>
-		 							</div>
-		 							<div class="panel-body">
-		 								<p>Reporte de equipos agrupados por departamento.</p>
-		 								<a href="reportes/reportePorDepartamento.php" class="btn btn-default btn-block" target="_blank">
-		 									<span class="glyphicon glyphicon-building"></span> Generar Reporte
-		 								</a>
-		 							</div>
-		 						</div>
-		 					</div>
-		 				</div>
-		 			</div>
-		 		</div>
-		 	</div>
-		 </div>
+<div class="eq op" id="vistaReportes" data-cat="<?php echo htmlspecialchars(json_encode(array('superAdmin' => $esSuper, 'hoteles' => $hoteles, 'deptos' => $deptos, 'usuario' => (int)$_SESSION['iduser']), JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8'); ?>"><p class="cc-muted">Cargando…</p></div>
+<div class="mod-velo" id="modal" hidden></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="../js/cc-ui.js?v=<?php echo $ver('js/cc-ui.js'); ?>"></script>
+<script src="../js/reportes.js?v=<?php echo $ver('js/reportes.js'); ?>"></script>
+		</main>
 	</div>
+</div>
 </body>
 </html>
-
-<?php 
-	// El archivo de seguridad ya maneja la redirección automáticamente
-?>

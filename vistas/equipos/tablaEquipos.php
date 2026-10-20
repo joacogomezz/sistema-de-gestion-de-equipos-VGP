@@ -262,64 +262,64 @@
 		width: 100vw !important;
 		height: 100vh !important;
 		min-height: 100% !important;
-		background: #000 !important;
-		opacity: 0.85 !important;
+		background: var(--velo) !important;
+		opacity: 1 !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-dialog {
-		background: #1a1a1a !important;
-		border: 2px solid #c29a4b !important;
-		color: #fff !important;
-		border-radius: 10px !important;
+		background: var(--superficie) !important;
+		border: 1px solid var(--borde) !important;
+		color: var(--texto) !important;
+		border-radius: var(--radio-md) !important;
 		max-width: 480px !important;
 		margin: 12vh auto 5% auto !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-header {
-		background: #0f0f0f !important;
-		color: #c29a4b !important;
-		border-bottom: 1px solid #333 !important;
+		background: var(--peligro-suave) !important;
+		color: var(--peligro-texto) !important;
+		border-bottom: 1px solid var(--borde) !important;
 		font-weight: 700 !important;
 		font-size: 16px !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-body {
-		background: #1a1a1a !important;
-		color: #eee !important;
+		background: var(--superficie) !important;
+		color: var(--texto) !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-body .ajs-content {
-		color: #eee !important;
+		color: var(--texto) !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-footer {
-		background: #1a1a1a !important;
-		border-top: 1px solid #333 !important;
+		background: var(--superficie-hundida) !important;
+		border-top: 1px solid var(--borde) !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
-		background: #c0392b !important;
-		border-color: #a93226 !important;
-		color: #fff !important;
+		background: var(--peligro) !important;
+		border-color: var(--peligro) !important;
+		color: #FFFFFF !important;
 	}
 	.alertify.alertify-equipo-advertencia .ajs-footer .ajs-buttons.ajs-auxiliary .ajs-button {
-		background: #444 !important;
-		border-color: #555 !important;
-		color: #fff !important;
+		background: var(--superficie) !important;
+		border-color: var(--borde-fuerte) !important;
+		color: var(--texto) !important;
 	}
 	#tablaEquipos.tabla-equipos-compacta {
 		width: 100%;
 		max-width: 100%;
 		table-layout: fixed;
-		font-size: 9.5px;
+		font-size: 12px;
 		margin-bottom: 0;
 	}
 	#tablaEquipos td, #tablaEquipos th {
 		white-space: normal;
 		word-break: break-word;
 		overflow-wrap: anywhere;
-		line-height: 1.15;
+		line-height: 1.3;
 		vertical-align: middle;
-		padding: 3px 2px;
+		padding: 6px 5px !important;
 	}
 	#tablaEquipos thead th {
-		font-size: 9px;
-		font-weight: 700;
-		padding: 4px 2px;
+		font-size: 11px !important;
+		font-weight: 500;
+		padding: 8px 5px !important;
 		white-space: normal;
 		hyphens: auto;
 	}
@@ -358,7 +358,8 @@
 	}
 	#tablaEquipos .col-codigo {
 		width: 8%;
-		font-size: 8.5px;
+		font-size: 11.5px;
+		font-weight: 500;
 		word-break: break-all;
 	}
 	#tablaEquipos .col-descripcion { width: 5.5%; }
@@ -415,16 +416,16 @@
 	}
 	#tablaEquipos .label-estado-xs {
 		display: inline-block;
-		font-size: 8px;
-		padding: 2px 4px;
+		font-size: 11px;
+		padding: 2px 6px;
 		line-height: 1.2;
 		max-width: 100%;
 		white-space: normal;
 		text-align: center;
 	}
 	#tablaEquipos .doc-sin-archivo {
-		font-size: 8px;
-		color: #888;
+		font-size: 11px;
+		color: var(--texto-secundario);
 	}
 	#tablaEquipos .col-accion-editar,
 	#tablaEquipos .col-accion-eliminar {
@@ -442,64 +443,65 @@
 		position: sticky;
 		right: 34px;
 		z-index: 3;
-		background: #2a2a2a;
+		background: var(--superficie) !important;
 	}
 	#tablaEquipos td.col-accion-eliminar,
 	#tablaEquipos th.col-accion-eliminar {
 		position: sticky;
 		right: 0;
 		z-index: 4;
-		background: #2a2a2a;
+		background: var(--superficie) !important;
 	}
 	#tablaEquipos thead th.col-accion-editar,
 	#tablaEquipos thead th.col-accion-eliminar {
-		background: #1f1f1f;
+		background: var(--superficie-hundida) !important;
 	}
 
 	@media (max-width: 1600px) {
 		#tablaEquipos.tabla-equipos-compacta {
-			font-size: 9px;
+			font-size: 11.5px;
 		}
-		#tablaEquipos .col-codigo { font-size: 8px; }
+		#tablaEquipos .col-codigo { font-size: 11px; }
 	}
 
 	@media (max-width: 768px) {
 		#tablaEquipos.tabla-equipos-compacta {
-			font-size: 8.5px;
+			font-size: 11px;
 		}
 	}
 	#tablaEquipos tbody tr.fila-equipo-tabla {
 		cursor: pointer;
 	}
 	#tablaEquipos tbody tr.fila-equipo-tabla:hover {
-		background-color: rgba(194, 154, 75, 0.14) !important;
+		background-color: var(--dorado-suave) !important;
 	}
 	#modalVerFichaEquipo .modal-content {
-		background: #2a2a2a;
-		color: #eee;
-		border: 1px solid #444;
+		background: var(--superficie);
+		color: var(--texto);
+		border: 1px solid var(--borde);
 	}
 	#modalVerFichaEquipo .modal-header {
-		border-bottom-color: #444;
-		background: #1f1f1f;
+		border-bottom-color: var(--borde);
+		background: transparent;
 	}
-	#modalVerFichaEquipo .modal-title { color: #c29a4b; }
+	#modalVerFichaEquipo .modal-title { color: var(--texto); }
 	#modalVerFichaEquipo .modal-footer {
-		border-top-color: #444;
-		background: #1f1f1f;
+		border-top-color: var(--borde);
+		background: var(--superficie-hundida);
 	}
 	#modalVerFichaEquipo .vf-panel {
-		background: #222;
-		border: 1px solid #3a3a3a;
-		border-radius: 8px;
+		background: var(--superficie);
+		border: 1px solid var(--borde);
+		border-radius: var(--radio-md);
 		padding: 12px 14px;
 		margin-bottom: 12px;
 	}
 	#modalVerFichaEquipo .vf-panel h5 {
 		margin: 0 0 10px 0;
-		color: #c29a4b;
-		font-size: 13px;
-		border-bottom: 1px solid #444;
+		color: var(--texto);
+		font-size: 15px;
+		font-weight: 600;
+		border-bottom: 1px solid var(--borde);
 		padding-bottom: 6px;
 	}
 	#modalVerFichaEquipo .vf-row {
@@ -515,15 +517,15 @@
 	}
 	#modalVerFichaEquipo .vf-label {
 		display: block;
-		font-size: 10px;
-		color: #999;
+		font-size: 11px;
+		color: var(--texto-secundario);
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		margin-bottom: 2px;
 	}
 	#modalVerFichaEquipo .vf-value {
-		font-size: 13px;
-		color: #f0f0f0;
+		font-size: 14px;
+		color: var(--texto);
 		word-break: break-word;
 	}
 	#modalVerFichaEquipo .vf-foto-wrap {
@@ -533,10 +535,17 @@
 	#modalVerFichaEquipo .vf-foto-wrap img {
 		max-width: 100%;
 		max-height: 220px;
-		border-radius: 8px;
-		border: 1px solid #444;
+		border-radius: var(--radio-md);
+		border: 1px solid var(--borde);
 	}
 	#modalVerFichaEquipo .vf-acciones-doc .btn { margin-right: 6px; margin-bottom: 4px; }
+	/* Filas de una línea con desplazamiento horizontal; las acciones quedan fijas a la derecha */
+	#tablaEquipos.tabla-equipos-compacta { table-layout: auto; min-width: 1560px; }
+	#tablaEquipos td, #tablaEquipos th { white-space: nowrap; word-break: normal; overflow-wrap: normal; }
+	#tablaEquipos td.col-descripcion, #tablaEquipos td.col-ubicacion-fisica { white-space: normal; min-width: 190px; }
+	#tablaEquipos td.col-marca-modelo { white-space: normal; min-width: 150px; }
+	#tablaEquipos td.col-codigo { word-break: normal; }
+	#tablaEquipos .col-accion-editar .btn, #tablaEquipos .col-accion-eliminar .btn { min-height: 28px; padding: 2px 8px; }
 </style>
 
 <div class="row">
@@ -587,7 +596,7 @@
 									 data-toggle="modal" data-target="#modalImagen" onclick="mostrarImagen('<?php echo $rutaFinalImagen; ?>')"
 									 title="Click para ampliar">
 							<?php else: ?>
-								<span class="glyphicon glyphicon-picture" style="color: #ccc;" title="Ruta original: <?php echo $rutaImagenEquipo; ?>"></span>
+								<span class="glyphicon glyphicon-picture" style="color: var(--texto-secundario);" title="Ruta original: <?php echo $rutaImagenEquipo; ?>"></span>
 							<?php endif; ?>
 						</td>
 						<td class="col-codigo"><?php echo $ver[1 + $o]; ?></td>
@@ -706,7 +715,7 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color:#fff;opacity:.8;"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" ><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="modalVerFichaLabel"><span class="glyphicon glyphicon-modal-window"></span> Ficha del equipo</h4>
 			</div>
 			<div class="modal-body" style="max-height:70vh;overflow-y:auto;">
@@ -815,7 +824,7 @@
 							<div class="row">
 								<div class="col-sm-4">
 									<div id="previewImagenActual" style="margin-bottom: 8px;">
-										<img id="imgEquipoActual" src="" alt="Sin imagen" style="max-width: 120px; max-height: 120px; border-radius: 8px; border: 1px solid #333; object-fit: cover; display: none;">
+										<img id="imgEquipoActual" src="" alt="Sin imagen" style="max-width: 120px; max-height: 120px; border-radius: 8px; border: 1px solid var(--borde); object-fit: cover; display: none;">
 										<span id="sinImagenActual" class="text-muted" style="display: inline-block; padding: 10px;">Sin imagen</span>
 									</div>
 									<label class="btn btn-default btn-sm btn-block">
@@ -892,7 +901,7 @@
 						</div>
 					</div>
 
-					<hr style="border-color:#444;margin:12px 0;">
+					<hr style="border-color:var(--borde);margin:12px 0;">
 					<p class="text-muted small" style="margin-bottom:8px;"><strong>Control de equipo</strong> — mismo dato que en la tabla (usuario / factura). Puede editarlos o dejarlos vacíos.</p>
 					<div class="row">
 						<div class="col-sm-6">
@@ -1082,7 +1091,7 @@
 			'Advertencia',
 			'<strong>¿Está seguro de eliminar este equipo?</strong><br><br>' +
 			'Se eliminará el registro del equipo y los datos vinculados (bajas, resguardos, facturas escaneadas, etc.).<br>' +
-			'<span style="color:#e74c3c;">Esta acción no se puede deshacer.</span>',
+			'<span style="color:var(--peligro);">Esta acción no se puede deshacer.</span>',
 			function(){
 				$.ajax({
 					type:"POST",
@@ -1259,7 +1268,7 @@
 			'Advertencia',
 			'<strong>¿Está seguro de eliminar ' + etiqueta + '?</strong><br><br>' +
 			'El archivo se borrará del servidor de forma permanente.<br>' +
-			'<span style="color:#e74c3c;">Esta acción no se puede deshacer.</span>',
+			'<span style="color:var(--peligro);">Esta acción no se puede deshacer.</span>',
 			function() {
 				$.ajax({
 					type: 'POST',
